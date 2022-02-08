@@ -1,6 +1,7 @@
 import os
 from tkinter import *
 from UserDetails import User_Details
+from Train import Train_Dataset
 
 
 class Dashboard_Admin:
@@ -29,7 +30,8 @@ class Dashboard_Admin:
         # Button for Training Dataset
         Button(text="Train Data",
                bg="black", fg="White",
-               font=("Montserrat bold", 10)
+               font=("Montserrat bold", 10),
+               command=self.train_data
                ).place(relx=0.2, rely=0.4, height=40, width=120)
 
         # Button for ViewImage In Dataset
@@ -47,6 +49,10 @@ class Dashboard_Admin:
     def user_details(self):
         self.screen = Toplevel(self.screen)
         self.app = User_Details(self.screen)
+
+    def train_data(self):
+        self.screen = Toplevel(self.screen)
+        self.app = Train_Dataset(self.screen)
 
 
 if __name__ == "__main__":
