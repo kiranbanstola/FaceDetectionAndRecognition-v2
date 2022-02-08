@@ -1,4 +1,5 @@
 from tkinter import *
+from UserDetails import User_Details
 
 
 class Dashboard_Admin:
@@ -12,7 +13,8 @@ class Dashboard_Admin:
 
         Button(text="User Details",
                bg="blue", fg="White",
-               font=("Montserrat bold", 10)
+               font=("Montserrat bold", 10),
+               command=self.user_details
                ).place(relx=0.2, rely=0.3, height=40, width=120)
 
         Button(text="Attendance",
@@ -24,6 +26,11 @@ class Dashboard_Admin:
                bg="black", fg="White",
                font=("Montserrat bold", 10)
                ).place(relx=0.2, rely=0.4, height=40, width=120)
+
+    # Function Button
+    def user_details(self):
+        self.screen = Toplevel(self.screen)
+        self.app=User_Details(self.screen)
 
 
 if __name__ == "__main__":
