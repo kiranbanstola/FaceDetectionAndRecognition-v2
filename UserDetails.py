@@ -3,6 +3,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 from tkinter import messagebox
 import mysql.connector
+import cv2
 
 
 class User_Details:
@@ -170,19 +171,19 @@ class User_Details:
         Buttons_frame = Frame(User_info_frame, bg="white")
         Buttons_frame.place(x=5, y=250, width=535, height=125)
         # Reset Buttons
-        Reset_btn = ttk.Button(Buttons_frame,command=self.reset_data, text="Reset", width=15)
+        Reset_btn = ttk.Button(Buttons_frame, command=self.reset_data, text="Reset", width=15)
         Reset_btn.grid(row=0, column=1, padx=15, pady=20)
         # Update Buttons
         Update_btn = ttk.Button(Buttons_frame, command=self.update_data, text="Update", width=15)
         Update_btn.grid(row=0, column=2, padx=15, pady=20)
         # Delete Buttons
-        Delete_btn = ttk.Button(Buttons_frame,command=self.delete_data, text="Delete", width=15, )
+        Delete_btn = ttk.Button(Buttons_frame, command=self.delete_data, text="Delete", width=15, )
         Delete_btn.grid(row=0, column=3, padx=15, pady=20)
         # Save Buttons
         Save_btn = ttk.Button(Buttons_frame, command=self.add_data, text="Save", width=15)
         Save_btn.grid(row=0, column=4, padx=15, pady=20)
         # Take Photo Buttons
-        Take_photo_btn = ttk.Button(Buttons_frame, text="Take Photo", width=15)
+        Take_photo_btn = ttk.Button(Buttons_frame,command=self.generate_dataset, text="Take Photo", width=15)
         Take_photo_btn.grid(row=1, column=2, padx=15, pady=20)
         # Update Photo Buttons
         Update_photo_btn = ttk.Button(Buttons_frame, command=self.update_data, text="Update Photo", width=15)
@@ -386,9 +387,9 @@ class User_Details:
                                                    database="attendance_system"
                                                    )
                     my_cursor = conn.cursor()
-                    query="delete from users where Userid=%s"
-                    val=(self.var_userid.get(),)
-                    my_cursor.execute(query,val)
+                    query = "delete from users where Userid=%s"
+                    val = (self.var_userid.get(),)
+                    my_cursor.execute(query, val)
                 else:
                     if not delete:
                         return
@@ -404,18 +405,85 @@ class User_Details:
 
     # Reset Function
     def reset_data(self):
-            self.var_userid.set("")
-            self.var_username.set("")
-            self.var_roll.set("")
-            self.var_year.set("Select Year")
-            self.var_faculty.set("Select Faculty")
-            self.var_sem.set("Select Semester")
-            self.var_course.set("Select Course")
-            self.var_email.set("")
-            self.var_gender.set("")
-            self.var_dob.set("")
-            self.var_phone.set("")
-            self.var_photoRB.set("")
+        self.var_userid.set("")
+        self.var_username.set("")
+        self.var_roll.set("")
+        self.var_year.set("Select Year")
+        self.var_faculty.set("Select Faculty")
+        self.var_sem.set("Select Semester")
+        self.var_course.set("Select Course")
+        self.var_email.set("")
+        self.var_gender.set("")
+        self.var_dob.set("")
+        self.var_phone.set("")
+        self.var_photoRB.set("")
+
+    # Generate data set and take Sample using Opencv
+    def generate_dataset(self):
+        if self.var_faculty.get() == "Select Faculty" or self.var_username.get() == "" or self.var_userid.get() == "":
+            messagebox.showerror("Error", "All field Required", parent=self.screen)
+        else:
+            try:
+                conn = mysql.connector.connect(host="localhost",
+                                               user="root",
+                                               password="root",
+                                               database="attendance_system"
+                                               )
+                my_cursor = conn.cursor()
+                my_cursor.execute("select * from users")
+                myresult=my_cursor.fetchall()
+                id=0
+                for x in myresult:
+                    id+=1
+                my_cursor.execute("update users set Username=%s, Rollno=%s, Year=%s, Faculty=%s, Semester=%s, Course=%s, Email=%s, Gender=%s, DOB=%s, Phone=%s, Photo=%s where Userid=%s ",
+                        (
+                            self.var_username.get(),
+                            self.var_roll.get(),
+                            self.var_year.get(),
+                            self.var_sem.get(),
+                            self.var_course.get(),
+                            self.var_faculty.get(),
+                            self.var_email.get(),
+                            self.var_gender.get(),
+                            self.var_dob.get(),
+                            self.var_phone.get(),
+                            self.var_photoRB.get(),
+                            self.var_userid.get()==id+1
+                        ))
+                conn.commit()
+                self.fetch_data()
+                self.reset_data()
+                conn.close()
+
+                # Load haarcascade_frontalface_default from opencv
+                face_classifier=cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+                def face_cropped(img):
+                    gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+                    faces=face_classifier.detectMultiScale(gray,1.3,5)
+                    #Scaling Factor = 1.3  Minimum Neighbor = 5
+                    for(x,y,w,h) in faces:
+                        face_cropped=img[y:y+h,x:x+w]
+                        return face_cropped
+                cap=cv2.VideoCapture(0)
+                img_id=0
+                while True:
+                    ret, my_frame=cap.read()
+                    if face_cropped(my_frame) is not None:
+                        img_id+=1
+                        face=cv2.resize(face_cropped(my_frame),(450,450))
+                        face=cv2.cvtColor(face,cv2.COLOR_BGR2GRAY)
+                        file_name_path = "data/user."+str(id)+"."+str(img_id)+".jpg"
+                        cv2.imwrite(file_name_path,face)
+                        cv2.putText(face,str(img_id),(50,50),cv2.FONT_ITALIC,2,(0,255,0),2)
+                        cv2.imshow("Cropped Face",face)
+
+                    if cv2.waitKey(1)==13 or int(img_id)==100:
+                        break
+                cap.release()
+                cv2.destroyAllWindows()
+                messagebox.showinfo("Result","Generating Dataset Completed!!!!")
+            except Exception as es:
+                messagebox.showerror("Error", f"Due to :{str(es)}", parent=self.screen)
 
 
 if __name__ == "__main__":
