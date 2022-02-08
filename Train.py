@@ -20,7 +20,7 @@ class Train_Dataset:
         self.photo_img1 = ImageTk.PhotoImage(img1)
         bg_img = Label(self.screen, image=self.photo_img1)
         bg_img.place(x=0, y=0)
-        Label(text="Train Data", font=("Print Bold", 24), fg="SteelBlue4",bg="powder blue").place(relx=0.35, rely=0.05)
+        Label(screen,text="Train Data", font=("Print Bold", 24), fg="SteelBlue4",bg="powder blue").place(relx=0.35, rely=0.05)
 
         # Tain_Button
         train_button = ttk.Button(screen, command=self.train_dataset, text="Start Training Dataset", cursor="hand2")
