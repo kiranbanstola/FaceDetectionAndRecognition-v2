@@ -1,11 +1,8 @@
 from tkinter import *
 from tkinter import ttk
 from PIL import Image, ImageTk
-from tkinter import messagebox
 import mysql.connector
 import cv2
-import os
-import numpy as np
 
 
 class Face_recog:
@@ -39,8 +36,8 @@ class Face_recog:
             # For making rectangle
             for (x, y, w, h) in features:
                 cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 3)
-                id, predict = clf.predict(gray_image[y:y + h, x:x + w])
-                confidence = int((100*(1 - predict / 300)))
+                id, predict = clf.predict(gray_image[y:y+h, x:x+w])
+                confidence = int((100*(1-predict/300)))
 
                 # Connect Database and fetch Data
                 conn = mysql.connector.connect(host="localhost",
@@ -70,28 +67,30 @@ class Face_recog:
                 else:
                     cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 3)
                     cv2.putText(img, "Unknown Face", (x, y - 50), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 3)
-                coord = [x, y, w, y]
+                coord = [x, y, w, h]
             return coord
 
         # Function to Recognize Face
         def recognize(img, clf, faceCascade):
-            coord = draw_boundary(img, faceCascade, 1.1, 10, (0, 255, 0), "Face", clf)
+            coord = draw_boundary(img, faceCascade, 1.1, 10, (0, 255, 0), "face", clf)
             return img
 
         faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+
         # Histogram Alg
         clf = cv2.face.LBPHFaceRecognizer_create()
         clf.read("classifier.xml")
-
         video_cap = cv2.VideoCapture(0)
+
         while True:
             ret, img = video_cap.read()
             img = recognize(img, clf, faceCascade)
             cv2.imshow("Welcome to Face Recognition", img)
+
             if cv2.waitKey(1) == 13:
                 break
-            video_cap.release()
-            cv2.destroyAllWindows()
+        video_cap.release()
+        cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
