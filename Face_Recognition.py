@@ -4,6 +4,8 @@ from PIL import Image, ImageTk
 import mysql.connector
 import cv2
 import os
+from time import strftime
+from datetime import datetime
 
 
 class Face_Recognition:
@@ -27,9 +29,29 @@ class Face_Recognition:
         start_button = ttk.Button(bg_img, command=self.face_recog, text="Start Recognition", cursor="hand2")
         start_button.place(relx=0.25, rely=0.45, width=200, height=50)
 
+    # Attendance Function
+    def mark_attendance(self,i,n):
+        with open("attendance.csv","r+",newline="\n") as f:
+            myDataList=f.readlines()
+            name_list=[]
+            for line in myDataList:
+                entry=line.split((","))     #kiran,2
+                name_list.append(entry[0])
+            # mark present if not present
+            if((i not in name_list) and (n not in name_list)):
+                now=datetime.now()
+                d1=now.strftime("%d/%m/%Y")
+                dtString=now.strftime("%H:%M:%S")
+                f.writelines(f"\n{i},{n},{dtString},{d1},Present")
+
+
+
+
+
+    
+
     # Face Recognition
     def face_recog(self):
-
 
         # Function To Draw Boundary
 
@@ -56,9 +78,16 @@ class Face_Recognition:
                 n = my_cursor.fetchone()
                 n = "+".join(n)
 
+                #for attendance
+                my_cursor.execute("select Userid from users where Userid=" + str(id))
+                i = my_cursor.fetchone()
+                i = "+".join(i)
+
                 # Condition for Confidence greater than 75%
                 if confidence > 80:
+                    cv2.putText(img, f"Userid:{i}", (x, y - 55), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 3)
                     cv2.putText(img, f"Username:{n}", (x, y - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 3)
+                    self.mark_attendance(i,n)
                 else:
                     cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 3)
                     cv2.putText(img, "Unknown Face", (x, y - 50), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 3)
