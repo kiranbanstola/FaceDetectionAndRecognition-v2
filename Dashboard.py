@@ -3,6 +3,7 @@ from tkinter import *
 from UserDetails import User_Details
 from Train import Train_Dataset
 from Face_Recognition import Face_Recognition
+from Attendance import Attendance_Details
 
 
 class Dashboard_Admin:
@@ -25,7 +26,8 @@ class Dashboard_Admin:
         # Button for Attendance
         Button(text="Attendance",
                bg="black", fg="White",
-               font=("Montserrat bold", 10)
+               font=("Montserrat bold", 10),
+               command=self.attendance_data
                ).place(relx=0.35, rely=0.3, height=40, width=120)
 
         # Button for Detect Face
@@ -65,6 +67,10 @@ class Dashboard_Admin:
     def face_data(self):
         self.new_window = Toplevel(self.screen)
         self.app = Face_Recognition(self.new_window)
+
+    def attendance_data(self):
+        self.new_window = Toplevel(self.screen)
+        self.app = Attendance_Details(self.new_window)
 
 
 if __name__ == "__main__":
