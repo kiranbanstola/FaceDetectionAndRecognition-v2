@@ -74,9 +74,7 @@ class Attendance_System:
         rbutton = ttk.Button(login_frame, text="Register", cursor="hand2")
         rbutton.place(x=25, y=190)
 
-    # Show Password
-    def show_password(self):
-        
+
 
     # Login Function
     def login(self):
