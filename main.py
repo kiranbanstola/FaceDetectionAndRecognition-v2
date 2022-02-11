@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
+import mysql.connector
 
 
 class Attendance_System:
@@ -27,6 +28,12 @@ class Attendance_System:
         # global username_entry1
         # global password_entry1
 
+        global username_verification
+        global password_verification
+
+        username_verification=StringVar()
+        password_verification=StringVar()
+
         # Main Login Frame
         main_frame = Frame(self.screen, bg="white")
         main_frame.place(x=50, y=50, width=250, height=300)
@@ -42,7 +49,7 @@ class Attendance_System:
         # Username Label & Entry
         User_label = Label(uframe, text="Username", font=("Print Bold", 14), bg="white")
         User_label.pack()
-        self.username_entry = ttk.Entry(uframe)
+        self.username_entry = ttk.Entry(uframe,textvariable=username_verification)
         self.username_entry.pack()
 
         # Username Icon Image
@@ -57,7 +64,7 @@ class Attendance_System:
         # Password  Label & Entry
         pass_label = Label(pframe, text="Password", font=("Print Bold", 14), bg="white")
         pass_label.pack()
-        self.password_entry = ttk.Entry(pframe, show='*')
+        self.password_entry = ttk.Entry(pframe, show='*',textvariable=password_verification)
         self.password_entry.pack()
 
         # Password Icon Image
@@ -74,11 +81,12 @@ class Attendance_System:
         rbutton = ttk.Button(login_frame, text="Register", cursor="hand2")
         rbutton.place(x=25, y=190)
 
+    #def login_verify(self):
+
 
 
     # Login Function
     def login(self):
-
 
         # Function to show Error and success
         def hide_username_error():
@@ -91,7 +99,8 @@ class Attendance_System:
             username_error_icon = Label(self.screen, image=self.username_error_icon, bg="white")
             username_error_icon.place(x=240, y=151)
 
-
+        def hide_password_error():
+            password_erroricon.place_forget()
 
         def show_password_error():
             global password_erroricon
@@ -100,58 +109,47 @@ class Attendance_System:
             password_erroricon = Label(self.screen, image=self.password_error_icon, bg="white")
             password_erroricon.place(x=240, y=210)
 
-        def hide_password_error():
-            password_erroricon.place_forget()
+        def hide_Label_error():
+            errorlabel.place_forget()
 
         def show_Label_error():
             global errorlabel
             errorlabel = Label(self.screen, text="*All Field Required", bg="white", fg="red")
             errorlabel.place(x=120, y=240)
 
-        def hide_Label_error():
-            errorlabel.place_forget()
+        def hide_Label_Success():
+            successlabel.place_forget()
 
         def show_Label_Success():
             global successlabel
             successlabel = Label(self.screen, text="Login Successfully", bg="white", fg="green")
             successlabel.place(x=120, y=240)
 
-        def hide_Label_Success():
-            successlabel.place_forget()
-
-        def show_Label_UserNF():
-            global unf_errorlabel
-            unf_errorlabel = Label(self.screen, text="User Not Found", bg="white", fg="red")
-            unf_errorlabel.place(x=120, y=240)
-
-        def hide_Label_UserNF():
-            unf_errorlabel.place_forget()
-
-        def show_Label_invalidpass():
-            global invalid_errorlabel
-            invalid_errorlabel = Label(self.screen, text="Invalid password", bg="white", fg="red")
-            invalid_errorlabel.place(x=120, y=240)
-
         def hide_Label_invalidpass():
             invalid_errorlabel.place_forget()
 
-        if self.username_entry.get() == "":
-            if self.password_entry.get() == "":
-                show_username_error()
-                show_password_error()
-            else:
+        def show_Label_invaliddata():
+            global invalid_errorlabel
+            invalid_errorlabel = Label(self.screen, text="Invalid Data !!!", bg="white", fg="red")
+            invalid_errorlabel.place(x=120, y=240)
 
-                show_password_error()
+
+
+
+        ### Main Code
+        if self.username_entry.get() == "" or self.password_entry.get() == "":
+            show_username_error()
+            show_password_error()
             show_Label_error()
+        elif self.username_entry.get()=="aas" and self.password_entry.get()=="aas":
+            show_Label_Success()
         else:
-            if self.username_entry.get() == "kapa":
-                if self.password_entry.get() == "123":
-                    show_Label_Success()
-                else:
-                    show_password_error()
-                    show_Label_invalidpass()
-            else:
-                show_Label_UserNF()
+            show_username_error()
+            show_password_error()
+            show_Label_invaliddata()
+
+
+
 
 
 
