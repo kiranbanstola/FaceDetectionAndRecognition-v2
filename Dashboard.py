@@ -14,38 +14,43 @@ class Dashboard_Admin:
         self.screen.resizable(False, False)
 
         # Label for Welcome
-        Label(text="Welcome to Dashboard", font=("Print Bold", 24)).pack()
+        Label(self.screen,text="Welcome to Dashboard", font=("Print Bold", 24)).pack()
 
         # Button for User Details
-        Button(text="User Details",
+        Button(self.screen,
+               text="User Details",
                bg="blue", fg="White",
                font=("Montserrat bold", 10),
                command=self.user_details
                ).place(relx=0.2, rely=0.3, height=40, width=120)
 
         # Button for Attendance
-        Button(text="Attendance",
+        Button(self.screen,
+               text="Attendance",
                bg="black", fg="White",
                font=("Montserrat bold", 10),
                command=self.attendance_data
                ).place(relx=0.35, rely=0.3, height=40, width=120)
 
         # Button for Detect Face
-        Button(text="Detect Face",
+        Button(self.screen,
+               text="Detect Face",
                bg="black", fg="White",
                font=("Montserrat bold", 10),
                command=self.face_data
                ).place(relx=0.5, rely=0.3, height=40, width=120)
 
         # Button for Training Dataset
-        Button(text="Train Data",
+        Button(self.screen,
+               text="Train Data",
                bg="black", fg="White",
                font=("Montserrat bold", 10),
                command=self.train_data
                ).place(relx=0.2, rely=0.4, height=40, width=120)
 
         # Button for ViewImage In Dataset
-        Button(text="View Dataset",
+        Button(self.screen,
+               text="View Dataset",
                bg="black", fg="White",
                font=("Montserrat bold", 10),
                command=self.open_dataset
