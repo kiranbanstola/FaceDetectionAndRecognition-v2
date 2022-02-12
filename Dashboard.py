@@ -1,5 +1,7 @@
 import os
 from tkinter import *
+from tkinter import ttk
+from PIL import ImageTk, Image
 from UserDetails import User_Details
 from Train import Train_Dataset
 from Face_Recognition import Face_Recognition
@@ -9,52 +11,90 @@ from Attendance import Attendance_Details
 class Dashboard_Admin:
     def __init__(self, screen):
         self.screen = screen
-        self.screen.geometry("1280x720+150+75")
+        self.screen.geometry("600x500+250+100")
         self.screen.title("Attendance System")
         self.screen.resizable(False, False)
 
-        # Label for Welcome
-        Label(self.screen,text="Welcome to Dashboard", font=("Print Bold", 24)).pack()
+        # bg_gradient
+        img1 = Image.open(r"D:\FaceDetectionAndRecognition-v2\bg_gradient.jpg")
+        img1 = img1.resize((600, 500), Image.ANTIALIAS)
+        self.photo_img1 = ImageTk.PhotoImage(img1)
+        bg_img = Label(self.screen, image=self.photo_img1)
+        bg_img.place(x=0, y=0)
 
-        # Button for User Details
-        Button(self.screen,
-               text="User Details",
-               bg="blue", fg="White",
-               font=("Montserrat bold", 10),
-               command=self.user_details
-               ).place(relx=0.2, rely=0.3, height=40, width=120)
+        # Main Login Frame
+        main_frame = Frame(self.screen, bg="white")
+        main_frame.place(x=50, y=50, width=500, height=400)
+        # Main Labelframe
+        main_frame = LabelFrame(main_frame, text="Welcome To Dashboard", font=("Print Bold", 18), labelanchor="n",
+                                bg="white")
+        main_frame.place(x=10, y=10, width=480, height=380)
+
+        # Button with Icon for User Details
+        self.User_icon = ImageTk.PhotoImage(
+            Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\UserDetails_Frame.png"))
+        userdetails_btn = ttk.Button(main_frame,
+                                     text="User Details",
+                                     command=self.user_details,
+                                     cursor="hand2",
+                                     image=self.User_icon,
+                                     compound=LEFT)
+        userdetails_btn.place(x=60, y=60, width=130, height=45)
 
         # Button for Attendance
-        Button(self.screen,
-               text="Attendance",
-               bg="black", fg="White",
-               font=("Montserrat bold", 10),
-               command=self.attendance_data
-               ).place(relx=0.35, rely=0.3, height=40, width=120)
+        self.Attendance_icon = ImageTk.PhotoImage(
+            Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Attendance_Frame.png"))
+        attendance_btn = ttk.Button(main_frame,
+                                    text="Attendance",
+                                    command=self.attendance_data,
+                                    cursor="hand2",
+                                    image=self.Attendance_icon,
+                                    compound=LEFT,
+
+                                    )
+        attendance_btn.place(x=60, y=120, width=130, height=45)
 
         # Button for Detect Face
-        Button(self.screen,
-               text="Detect Face",
-               bg="black", fg="White",
-               font=("Montserrat bold", 10),
-               command=self.face_data
-               ).place(relx=0.5, rely=0.3, height=40, width=120)
+        self.DetectFace_icon = ImageTk.PhotoImage(
+            Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\DetectFace_Frame.png"))
 
-        # Button for Training Dataset
-        Button(self.screen,
-               text="Train Data",
-               bg="black", fg="White",
-               font=("Montserrat bold", 10),
-               command=self.train_data
-               ).place(relx=0.2, rely=0.4, height=40, width=120)
+        detectFace_btn = ttk.Button(main_frame,
+                                    text="Detect Face",
+                                    command=self.face_data,
+                                    cursor="hand2",
+                                    image=self.DetectFace_icon,
+                                    compound=LEFT)
+        detectFace_btn.place(x=60, y=180, width=130, height=45)
 
-        # Button for ViewImage In Dataset
-        Button(self.screen,
-               text="View Dataset",
-               bg="black", fg="White",
-               font=("Montserrat bold", 10),
-               command=self.open_dataset
-               ).place(relx=0.35, rely=0.4, height=40, width=120)
+        # Button for Train Dataset
+        self.TrainData_icon = ImageTk.PhotoImage(
+            Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\TrainData_Frame.png"))
+        trainDataset_btn = ttk.Button(main_frame,
+                                      text="Train Dataset",
+                                      command=self.train_data,
+                                      cursor="hand2",
+                                      image=self.TrainData_icon,
+                                      compound=LEFT)
+        trainDataset_btn.place(x=220, y=60, width=130, height=45)
+
+        # Button for View Dataset
+        self.OpenDataset_icon = ImageTk.PhotoImage(
+            Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\OpenDataset_Frame.png"))
+        openDataset_btn = ttk.Button(main_frame,
+                                     text="Open Dataset",
+                                     command=self.open_dataset,
+                                     cursor="hand2",
+                                     image=self.OpenDataset_icon,
+                                     compound=LEFT
+                                     )
+        openDataset_btn.place(x=220, y=120, width=130, height=45)
+
+        # Style For TKK
+        style = ttk.Style()
+        style.configure("TButton",
+                        font=("open sans", 10),
+                        background='#27C9BA',
+                        foreground='#000')
 
     # Def for Opening Dataset
     def open_dataset(self):
