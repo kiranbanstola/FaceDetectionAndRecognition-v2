@@ -133,13 +133,13 @@ class Attendance_System:
     """
         # Main Code
         if self.username_entry.get() == "" or self.password_entry.get() == "":
-                #show_username_error()
-                #show_password_error()
-                #show_Label_error()
-                invalid_errorlabel = Label(self.screen, text="Invalid Data !!!", bg="white", fg="red")
-                invalid_errorlabel.place(x=120, y=240)
+            # show_username_error()
+            # show_password_error()
+            # show_Label_error()
+            invalid_errorlabel = Label(self.screen, text="Invalid Data !!!", bg="white", fg="red")
+            invalid_errorlabel.place(x=120, y=240)
         elif self.username_entry.get() == "aas" and self.password_entry.get() == "aas":
-            #show_Label_Success()
+            # show_Label_Success()
             invalid_errorlabel = Label(self.screen, text="valid Data !!!", bg="white", fg="red")
             invalid_errorlabel.place(x=120, y=240)
         else:
@@ -194,12 +194,11 @@ class Register_Admin:
         main_frame = Frame(self.screen, bg="white")
         main_frame.place(x=50, y=50, width=400, height=500)
         # Main Labelframe
-        main_frame = LabelFrame(main_frame,text="Register", font=("Print Bold", 18),labelanchor="n", bg="white")
+        main_frame = LabelFrame(main_frame, text="Register", font=("Print Bold", 18), labelanchor="n", bg="white")
         main_frame.place(x=10, y=10, width=380, height=480)
 
-
         # Name Label and Entry
-        name_label = Label(main_frame, text="Name",font=("Print Bold", 12), bg="white")
+        name_label = Label(main_frame, text="Name", font=("Print Bold", 12), bg="white")
         name_label.place(x=55, y=45)
         name_entry = ttk.Entry(main_frame, textvariable=self.var_name, width=20)
         name_entry.place(x=30, y=70)
@@ -210,9 +209,8 @@ class Register_Admin:
         usericon1 = Label(main_frame, image=self.User_icon1, bg="white")
         usericon1.place(x=30, y=42)
 
-
         # Username Label & Entry
-        username_label = Label(main_frame, text="Username",font=("Print Bold", 12), bg="white")
+        username_label = Label(main_frame, text="Username", font=("Print Bold", 12), bg="white")
         username_label.place(x=230, y=45)
         username_entry = ttk.Entry(main_frame, textvariable=self.var_Username, width=20)
         username_entry.place(x=205, y=70)
@@ -224,7 +222,7 @@ class Register_Admin:
         usericon2.place(x=205, y=42)
 
         # Contact Label & Entry
-        contact_label = Label(main_frame, text="Contact",font=("Print Bold", 12), bg="white")
+        contact_label = Label(main_frame, text="Contact", font=("Print Bold", 12), bg="white")
         contact_label.place(x=55, y=120)
         contact_entry = ttk.Entry(main_frame, textvariable=self.var_contact, width=20)
         contact_entry.place(x=30, y=145)
@@ -236,7 +234,7 @@ class Register_Admin:
         contacticon.place(x=30, y=120)
 
         # Email Label & Entry
-        email_label = Label(main_frame, text="Email",font=("Print Bold", 12), bg="white")
+        email_label = Label(main_frame, text="Email", font=("Print Bold", 12), bg="white")
         email_label.place(x=230, y=120)
         email_entry = ttk.Entry(main_frame, textvariable=self.var_email, width=20)
         email_entry.place(x=205, y=145)
@@ -244,16 +242,14 @@ class Register_Admin:
         #  Email Icon Image
         emailiconimg = Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Email_Frame.png")
         self.Email_icon = ImageTk.PhotoImage(emailiconimg)
-        emailicon = Label(main_frame, image=self. Email_icon, bg="white")
+        emailicon = Label(main_frame, image=self.Email_icon, bg="white")
         emailicon.place(x=205, y=120)
 
         # password Label & Entry
-        password_label = Label(main_frame, text="Password",font=("Print Bold", 12), bg="white")
+        password_label = Label(main_frame, text="Password", font=("Print Bold", 12), bg="white")
         password_label.place(x=55, y=195)
         password_entry = ttk.Entry(main_frame, textvariable=self.var_password, show="*", width=20)
         password_entry.place(x=30, y=220)
-
-
 
         # Password Icon Image
         piconimg = Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Password_Frame.png")
@@ -261,9 +257,8 @@ class Register_Admin:
         passwordicon = Label(main_frame, image=self.pass_icon, bg="white")
         passwordicon.place(x=30, y=195)
 
-
         # confirm_password Label & Entry
-        confirm_password_label = Label(main_frame,font=("Print Bold", 12), text="Retype Password", bg="white")
+        confirm_password_label = Label(main_frame, font=("Print Bold", 12), text="Retype Password", bg="white")
         confirm_password_label.place(x=230, y=195)
         confirm_password_entry = ttk.Entry(main_frame, textvariable=self.var_confirmpassword, show="*", width=20)
         confirm_password_entry.place(x=205, y=220)
@@ -275,7 +270,8 @@ class Register_Admin:
         password1icon.place(x=205, y=195)
 
         # Checkbtn For terms and Condition
-        checkbtn = Checkbutton(main_frame, text="Agree Terms And Condition.",font=("Print Bold", 12), variable=self.var_checkbutton, onvalue=1,
+        checkbtn = Checkbutton(main_frame, text="Agree Terms And Condition.", font=("Print Bold", 12),
+                               variable=self.var_checkbutton, onvalue=1,
                                offvalue=0, takefocus=0,
                                bg="white")
         checkbtn.place(x=30, y=260)
@@ -319,7 +315,6 @@ class Register_Admin:
                 messagebox.showinfo("Success", "Register Successfully!!!!")
             conn.commit()
             conn.close()
-
 
 
 if __name__ == "__main__":
