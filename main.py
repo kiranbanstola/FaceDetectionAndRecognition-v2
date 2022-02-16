@@ -57,7 +57,7 @@ class Attendance_System:
         uiconimg = Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Username_Frame.png")
         self.User_icon = ImageTk.PhotoImage(uiconimg)
         usericon = Label(uframe, image=self.User_icon, bg="white")
-        usericon.place(x=5, y=-2)
+        usericon.place(x=5, y=0)
 
         # Password Frame
         pframe = Frame(login_frame, bg="white")
@@ -207,7 +207,7 @@ class Register_Admin:
         uiconimg = Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Username_Frame.png")
         self.User_icon1 = ImageTk.PhotoImage(uiconimg)
         usericon1 = Label(main_frame, image=self.User_icon1, bg="white")
-        usericon1.place(x=30, y=42)
+        usericon1.place(x=30, y=39)
 
         # Username Label & Entry
         username_label = Label(main_frame, text="Username", font=("Print Bold", 12), bg="white")
@@ -219,7 +219,7 @@ class Register_Admin:
         uiconimg = Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Username_Frame.png")
         self.User_icon2 = ImageTk.PhotoImage(uiconimg)
         usericon2 = Label(main_frame, image=self.User_icon2, bg="white")
-        usericon2.place(x=205, y=42)
+        usericon2.place(x=205, y=39)
 
         # Contact Label & Entry
         contact_label = Label(main_frame, text="Contact", font=("Print Bold", 12), bg="white")
@@ -231,7 +231,7 @@ class Register_Admin:
         contacticonimg = Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Contact_Frame.png")
         self.Contact_icon = ImageTk.PhotoImage(contacticonimg)
         contacticon = Label(main_frame, image=self.Contact_icon, bg="white")
-        contacticon.place(x=30, y=120)
+        contacticon.place(x=30, y=117)
 
         # Email Label & Entry
         email_label = Label(main_frame, text="Email", font=("Print Bold", 12), bg="white")
@@ -243,7 +243,7 @@ class Register_Admin:
         emailiconimg = Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Email_Frame.png")
         self.Email_icon = ImageTk.PhotoImage(emailiconimg)
         emailicon = Label(main_frame, image=self.Email_icon, bg="white")
-        emailicon.place(x=205, y=120)
+        emailicon.place(x=205, y=117)
 
         # password Label & Entry
         password_label = Label(main_frame, text="Password", font=("Print Bold", 12), bg="white")
@@ -255,7 +255,7 @@ class Register_Admin:
         piconimg = Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Password_Frame.png")
         self.pass_icon = ImageTk.PhotoImage(piconimg)
         passwordicon = Label(main_frame, image=self.pass_icon, bg="white")
-        passwordicon.place(x=30, y=195)
+        passwordicon.place(x=30, y=192)
 
         # confirm_password Label & Entry
         confirm_password_label = Label(main_frame, font=("Print Bold", 12), text="Retype Password", bg="white")
@@ -267,7 +267,7 @@ class Register_Admin:
         piconimg = Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Password_Frame.png")
         self.pass1_icon = ImageTk.PhotoImage(piconimg)
         password1icon = Label(main_frame, image=self.pass1_icon, bg="white")
-        password1icon.place(x=205, y=195)
+        password1icon.place(x=205, y=192)
 
         # Checkbtn For terms and Condition
         checkbtn = Checkbutton(main_frame, text="Agree Terms And Condition.", font=("Print Bold", 12),

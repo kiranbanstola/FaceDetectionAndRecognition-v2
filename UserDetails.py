@@ -176,22 +176,22 @@ class User_Details:
         Buttons_frame = Frame(User_info_frame, bg="white")
         Buttons_frame.place(x=5, y=250, width=535, height=125)
         # Reset Buttons
-        Reset_btn = ttk.Button(Buttons_frame, command=self.reset_data, text="Reset", width=15)
+        Reset_btn = ttk.Button(Buttons_frame, command=self.reset_data, text="Reset", width=13)
         Reset_btn.grid(row=0, column=1, padx=15, pady=20)
         # Update Buttons
-        Update_btn = ttk.Button(Buttons_frame, command=self.update_data, text="Update", width=15)
+        Update_btn = ttk.Button(Buttons_frame, command=self.update_data, text="Update", width=13)
         Update_btn.grid(row=0, column=2, padx=15, pady=20)
         # Delete Buttons
-        Delete_btn = ttk.Button(Buttons_frame, command=self.delete_data, text="Delete", width=15, )
+        Delete_btn = ttk.Button(Buttons_frame, command=self.delete_data, text="Delete", width=13)
         Delete_btn.grid(row=0, column=3, padx=15, pady=20)
         # Save Buttons
-        Save_btn = ttk.Button(Buttons_frame, command=self.add_data, text="Save", width=15)
+        Save_btn = ttk.Button(Buttons_frame, command=self.add_data, text="Save", width=13)
         Save_btn.grid(row=0, column=4, padx=15, pady=20)
         # Take Photo Buttons
-        Take_photo_btn = ttk.Button(Buttons_frame, command=self.generate_dataset, text="Take Photo", width=15)
+        Take_photo_btn = ttk.Button(Buttons_frame, command=self.generate_dataset, text="Take Photo", width=14)
         Take_photo_btn.grid(row=1, column=2, padx=15, pady=20)
         # Update Photo Buttons
-        Update_photo_btn = ttk.Button(Buttons_frame, command=self.update_data, text="Update Photo", width=15)
+        Update_photo_btn = ttk.Button(Buttons_frame, command=self.update_data, text="Update Photo", width=14)
         Update_photo_btn.grid(row=1, column=3, padx=15, pady=20)
 
         # User_Details Frame

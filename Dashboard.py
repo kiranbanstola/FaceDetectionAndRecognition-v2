@@ -92,9 +92,11 @@ class Dashboard_Admin:
         # Style For TKK
         style = ttk.Style()
         style.configure("TButton",
-                        font=("open sans", 10),
-                        background='#27C9BA',
+                        font=("built titling", 9),
+                        background='#fff',
                         foreground='#000')
+
+
 
     # Def for Opening Dataset
     def open_dataset(self):
