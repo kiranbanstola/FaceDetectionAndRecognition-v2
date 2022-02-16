@@ -38,6 +38,11 @@ class User_Details:
         self.var_gender = StringVar()
         self.var_photoRB = StringVar()
 
+        # Variable for Search  Option
+        #self.var_searchby = StringVar()
+        self.var_searchentry = StringVar()
+        #self.var_searchentry = StringVar()
+
         # User Search Frame
         Left_frame = LabelFrame(main_frame, bd=2, text="Search User", font=("Print Bold", 18), labelanchor="n",
                                 bg="white")
@@ -183,7 +188,7 @@ class User_Details:
         Save_btn = ttk.Button(Buttons_frame, command=self.add_data, text="Save", width=15)
         Save_btn.grid(row=0, column=4, padx=15, pady=20)
         # Take Photo Buttons
-        Take_photo_btn = ttk.Button(Buttons_frame,command=self.generate_dataset, text="Take Photo", width=15)
+        Take_photo_btn = ttk.Button(Buttons_frame, command=self.generate_dataset, text="Take Photo", width=15)
         Take_photo_btn.grid(row=1, column=2, padx=15, pady=20)
         # Update Photo Buttons
         Update_photo_btn = ttk.Button(Buttons_frame, command=self.update_data, text="Update Photo", width=15)
@@ -199,21 +204,27 @@ class User_Details:
         User_Details_frame.place(x=5, y=10, width=545, height=50)
 
         # Details Label
-        Details_label = Label(User_Details_frame, text="Details by:", font=("Montserrat semi-bold", 12), bg="white")
+        Details_label = Label(User_Details_frame, text="Enter ID:", font=("Montserrat semi-bold", 12), bg="white")
         Details_label.grid(row=0, column=0, padx=10, pady=10)
         # Details Combo
-        Details_combo = ttk.Combobox(User_Details_frame, font=("Montserrat medium", 10), width=10, state="readonly")
-        Details_combo["values"] = ("Select", "Roll No", "ID")
-        Details_combo.current(0)
-        Details_combo.grid(row=0, column=1, padx=10, pady=10)
+        #Details_combo = ttk.Combobox(User_Details_frame, textvariable=self.var_searchby, font=("Montserrat medium", 10),
+                                     #width=10, state="readonly")
+        #Details_combo["values"] = ("Select", "Rollno", "Userid")
+        #Details_combo.current(0)
+        #Details_combo.grid(row=0, column=1, padx=10, pady=10)
 
         # Details by input Entry
-        Details_entry = ttk.Entry(User_Details_frame, width=10, font=("Montserrat semi-bold", 12))
-        Details_entry.grid(row=0, column=2, padx=10, pady=10)
+        Details_entry = ttk.Entry(User_Details_frame, textvariable=self.var_searchentry, width=10,
+                                  font=("Montserrat semi-bold", 12))
+        Details_entry.grid(row=0, column=1, padx=10, pady=10)
 
         # Details by input button
-        Search_btn = ttk.Button(User_Details_frame, text="Search", width=10)
-        Search_btn.grid(row=0, column=3, padx=10, pady=10)
+        Search_btn = ttk.Button(User_Details_frame, command=self.search_data, text="Search", width=10)
+        Search_btn.grid(row=0, column=4, padx=10, pady=10)
+
+        # Details by Show All  button
+        Searchreset_btn = ttk.Button(User_Details_frame,command=self.fetch_data, text="Reset", width=10)
+        Searchreset_btn.grid(row=0, column=5, padx=10, pady=10)
 
         # Table Frame
         Table_Details_frame = Frame(Right_frame, bg="white")
@@ -431,59 +442,81 @@ class User_Details:
                                                )
                 my_cursor = conn.cursor()
                 my_cursor.execute("select * from users")
-                myresult=my_cursor.fetchall()
-                id=0
+                myresult = my_cursor.fetchall()
+                id = 0
                 for x in myresult:
-                    id+=1
-                my_cursor.execute("update users set Username=%s, Rollno=%s, Year=%s, Faculty=%s, Semester=%s, Course=%s, Email=%s, Gender=%s, DOB=%s, Phone=%s, Photo=%s where Userid=%s ",
-                        (
-                            self.var_username.get(),
-                            self.var_roll.get(),
-                            self.var_year.get(),
-                            self.var_sem.get(),
-                            self.var_course.get(),
-                            self.var_faculty.get(),
-                            self.var_email.get(),
-                            self.var_gender.get(),
-                            self.var_dob.get(),
-                            self.var_phone.get(),
-                            self.var_photoRB.get(),
-                            self.var_userid.get()==id+1
-                        ))
+                    id += 1
+                my_cursor.execute(
+                    "update users set Username=%s, Rollno=%s, Year=%s, Faculty=%s, Semester=%s, Course=%s, Email=%s, Gender=%s, DOB=%s, Phone=%s, Photo=%s where Userid=%s ",
+                    (
+                        self.var_username.get(),
+                        self.var_roll.get(),
+                        self.var_year.get(),
+                        self.var_sem.get(),
+                        self.var_course.get(),
+                        self.var_faculty.get(),
+                        self.var_email.get(),
+                        self.var_gender.get(),
+                        self.var_dob.get(),
+                        self.var_phone.get(),
+                        self.var_photoRB.get(),
+                        self.var_userid.get() == id + 1
+                    ))
                 conn.commit()
                 self.fetch_data()
                 self.reset_data()
                 conn.close()
 
                 # Load haarcascade_frontalface_default from opencv
-                face_classifier=cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-                def face_cropped(img):
-                    gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-                    faces=face_classifier.detectMultiScale(gray,1.3,5)
-                    #Scaling Factor = 1.3  Minimum Neighbor = 5
-                    for(x,y,w,h) in faces:
-                        face_cropped=img[y:y+h,x:x+w]
-                        return face_cropped
-                cap=cv2.VideoCapture(0)
-                img_id=0
-                while True:
-                    ret, my_frame=cap.read()
-                    if face_cropped(my_frame) is not None:
-                        img_id+=1
-                        face=cv2.resize(face_cropped(my_frame),(450,450))
-                        face=cv2.cvtColor(face,cv2.COLOR_BGR2GRAY)
-                        file_name_path = "data/user."+str(id)+"."+str(img_id)+".jpg"
-                        cv2.imwrite(file_name_path,face)
-                        cv2.putText(face,str(img_id),(50,50),cv2.FONT_ITALIC,2,(0,255,0),2)
-                        cv2.imshow("Cropped Face",face)
+                face_classifier = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 
-                    if cv2.waitKey(1)==13 or int(img_id)==100:
+                def face_cropped(img):
+                    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                    faces = face_classifier.detectMultiScale(gray, 1.3, 5)
+                    # Scaling Factor = 1.3  Minimum Neighbor = 5
+                    for (x, y, w, h) in faces:
+                        face_cropped = img[y:y + h, x:x + w]
+                        return face_cropped
+
+                cap = cv2.VideoCapture(0)
+                img_id = 0
+                while True:
+                    ret, my_frame = cap.read()
+                    if face_cropped(my_frame) is not None:
+                        img_id += 1
+                        face = cv2.resize(face_cropped(my_frame), (450, 450))
+                        face = cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
+                        file_name_path = "data/user." + str(id) + "." + str(img_id) + ".jpg"
+                        cv2.imwrite(file_name_path, face)
+                        cv2.putText(face, str(img_id), (50, 50), cv2.FONT_ITALIC, 2, (0, 255, 0), 2)
+                        cv2.imshow("Cropped Face", face)
+
+                    if cv2.waitKey(1) == 13 or int(img_id) == 100:
                         break
                 cap.release()
                 cv2.destroyAllWindows()
-                messagebox.showinfo("Result","Generating Dataset Completed!!!!")
+                messagebox.showinfo("Result", "Generating Dataset Completed!!!!")
             except Exception as es:
                 messagebox.showerror("Error", f"Due to :{str(es)}", parent=self.screen)
+
+    # Search Function
+    def search_data(self):
+        conn = mysql.connector.connect(host="localhost",
+                                       user="root",
+                                       password="root",
+                                       database="attendance_system"
+                                       )
+        my_cursor = conn.cursor()
+        # my_cursor.execute("select * from users where " + str(self.var_searchby.get()) + " LIKE '%" + str(self.var_searchentry.get()) + "%'")
+        my_cursor.execute("select * from users where Userid= " + str(self.var_searchentry.get()) + "")
+        data = my_cursor.fetchall()
+
+        if len(data) != 0:
+            self.user_table.delete(*self.user_table.get_children())
+            for i in data:
+                self.user_table.insert("", END, values=i)
+            conn.commit()
+        conn.close()
 
 
 if __name__ == "__main__":
