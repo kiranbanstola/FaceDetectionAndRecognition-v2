@@ -39,9 +39,9 @@ class User_Details:
         self.var_photoRB = StringVar()
 
         # Variable for Search  Option
-        #self.var_searchby = StringVar()
+        # self.var_searchby = StringVar()
         self.var_searchentry = StringVar()
-        #self.var_searchentry = StringVar()
+        # self.var_searchentry = StringVar()
 
         # User Search Frame
         Left_frame = LabelFrame(main_frame, bd=2, text="Search User", font=("Print Bold", 18), labelanchor="n",
@@ -207,11 +207,11 @@ class User_Details:
         Details_label = Label(User_Details_frame, text="Enter ID:", font=("Montserrat semi-bold", 12), bg="white")
         Details_label.grid(row=0, column=0, padx=10, pady=10)
         # Details Combo
-        #Details_combo = ttk.Combobox(User_Details_frame, textvariable=self.var_searchby, font=("Montserrat medium", 10),
-                                     #width=10, state="readonly")
-        #Details_combo["values"] = ("Select", "Rollno", "Userid")
-        #Details_combo.current(0)
-        #Details_combo.grid(row=0, column=1, padx=10, pady=10)
+        # Details_combo = ttk.Combobox(User_Details_frame, textvariable=self.var_searchby, font=("Montserrat medium", 10),
+        # width=10, state="readonly")
+        # Details_combo["values"] = ("Select", "Rollno", "Userid")
+        # Details_combo.current(0)
+        # Details_combo.grid(row=0, column=1, padx=10, pady=10)
 
         # Details by input Entry
         Details_entry = ttk.Entry(User_Details_frame, textvariable=self.var_searchentry, width=10,
@@ -223,7 +223,7 @@ class User_Details:
         Search_btn.grid(row=0, column=4, padx=10, pady=10)
 
         # Details by Show All  button
-        Searchreset_btn = ttk.Button(User_Details_frame,command=self.fetch_data, text="Reset", width=10)
+        Searchreset_btn = ttk.Button(User_Details_frame, command=self.fetch_data, text="Reset", width=10)
         Searchreset_btn.grid(row=0, column=5, padx=10, pady=10)
 
         # Table Frame
