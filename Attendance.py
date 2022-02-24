@@ -24,6 +24,20 @@ class Attendance_Details:
         bg_img = Label(self.screen, image=self.photo_img1)
         bg_img.place(x=0, y=0)
 
+        # Button for Back
+        self.Back_icon = ImageTk.PhotoImage(
+            Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Back_Frame.png"))
+        back_btn = ttk.Button(bg_img,
+                              text="Back",
+                              command=self.back_screen,
+                              cursor="hand2",
+                              image=self.Back_icon,
+                              compound=LEFT)
+        back_btn.place(x=50, y=30, width=100, height=35)
+
+
+
+
         # Variables Define
         self.var_attenid = StringVar()
         self.var_attenname = StringVar()
@@ -108,8 +122,8 @@ class Attendance_Details:
         Import_btn.place(relx=0.2, rely=0.6)
 
         # Update Buttons
-        #Update_btn = ttk.Button(Buttons_frame, text="Update Data",command=self.update_data, width=15, cursor="hand2")
-        #Update_btn.place(relx=0.6, rely=0.2)
+        Update_btn = ttk.Button(Buttons_frame, text="Update Data",command=self.update_data, width=15, cursor="hand2")
+        Update_btn.place(relx=0.6, rely=0.2)
 
         # Reset Buttons
         Reset_btn = ttk.Button(Buttons_frame, text="Reset Data",command=self.reset_data, width=15, cursor="hand2")
@@ -207,7 +221,19 @@ class Attendance_Details:
         self.var_status.set(rows[4])
 
     # Update Function
+    def update_data(self):
+        Update = messagebox.askyesno("Update", "Do you want to update details?", parent=self.screen)
+        if Update > 0:
+            self.var_attenid.get()
+            self.var_attenname.get()
+            self.var_time.get()
+            self.var_date.get()
+            self.var_status.get()
+        else:
+            if not Update:
+                return
 
+        messagebox.showinfo("Success", "Student update Sucessfully", parent=self.screen)
 
     # Reset Variable
     def reset_data(self):
@@ -216,6 +242,9 @@ class Attendance_Details:
         self.var_time.set("")
         self.var_date.set("")
         self.var_status.set("")
+
+    def back_screen(self):
+        self.screen.destroy()
 
 if __name__ == "__main__":
     screen = Tk()
