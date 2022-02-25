@@ -258,7 +258,7 @@ class Register_Admin:
         passwordicon.place(x=30, y=192)
 
         # confirm_password Label & Entry
-        confirm_password_label = Label(main_frame, font=("Print Bold", 12), text="Retype Password", bg="white")
+        confirm_password_label = Label(main_frame, font=("Print Bold", 12), text="Confirm Password", bg="white")
         confirm_password_label.place(x=230, y=195)
         confirm_password_entry = ttk.Entry(main_frame, textvariable=self.var_confirmpassword, show="*", width=20)
         confirm_password_entry.place(x=205, y=220)

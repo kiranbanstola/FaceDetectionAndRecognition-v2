@@ -1,3 +1,4 @@
+import os
 from tkinter import *
 from tkinter import ttk
 from PIL import Image, ImageTk
@@ -49,7 +50,7 @@ class User_Details:
         self.var_searchentry = StringVar()
 
         # Upper Frame
-        Upper_frame = LabelFrame(main_frame, bd=2, text="Search User", font=("Print Bold", 18),
+        Upper_frame = LabelFrame(main_frame, bd=2, text="Add User", font=("Print Bold", 18),
                                  labelanchor="n",
                                  bg="white")
         Upper_frame.place(x=20, y=20, width=825, height=230)
@@ -142,7 +143,7 @@ class User_Details:
         Update_btn = ttk.Button(Buttons_frame, command=self.update_data, text="Update", width=15, cursor="hand2")
         Update_btn.grid(row=0, column=1, padx=15, pady=10)
         # Delete Buttons
-        Delete_btn = ttk.Button(Buttons_frame, command=self.delete_data, text="Delete", width=15, cursor="hand2")
+        Delete_btn = ttk.Button(Buttons_frame, command=lambda:[self.delete_data,self.delete_photo], text="Delete", width=15, cursor="hand2")
         Delete_btn.grid(row=0, column=2, padx=15, pady=10)
         # Save Buttons
         Save_btn = ttk.Button(Buttons_frame, command=self.add_data, text="Save", width=15, cursor="hand2")
@@ -153,7 +154,7 @@ class User_Details:
         Take_photo_btn.grid(row=0, column=4, padx=15, pady=10)
 
         # Search System
-        SearchLabel_frame = LabelFrame(main_frame, bd=2, text="Search Details", bg="white", labelanchor="n")
+        SearchLabel_frame = LabelFrame(main_frame, bd=2, text="Search Details", bg="white", labelanchor="n" ,font=("Print Bold", 18))
         SearchLabel_frame.place(x=875, y=50, width=250, height=150)
 
         # Details Label
@@ -275,7 +276,7 @@ class User_Details:
 
     # Update Function
     def update_data(self):
-        if self.var_username.get() == "" or self.var_userid.get() == "":
+        if self.var_username.get() == "" or self.var_userid.get() == "Yes":
             messagebox.showerror("Error", "Field Required", parent=self.screen)
         else:
             try:
@@ -303,17 +304,24 @@ class User_Details:
                     if not Update:
                         return
 
-                messagebox.showinfo("Success", "Student update Sucessfully", parent=self.screen)
+                messagebox.showinfo("Success", "Student update Successfully", parent=self.screen)
                 conn.commit()
                 self.fetch_data()
                 conn.close()
             except Exception as es:
                 messagebox.showerror("Error", f"Due to :{str(es)}", parent=self.screen)
 
+    def delete_photo(self, id):
+        path = os.getcwd()
+        for filename in os.listdir('D:/FaceDetectionAndRecognition-v2/data'):
+            if filename.startswith('user.'+str(id)):
+                os.remove('D:/FaceDetectionAndRecognition-v2/data/'+filename)
+
+
     # Delete Function
     def delete_data(self):
         if self.var_userid.get() == "":
-            messagebox.showerror("Error", "Student id must be required", parent=self.screen)
+            messagebox.showerror("Error", "Nothing to Delete", parent=self.screen)
         else:
             try:
                 delete = messagebox.askyesno("Delete Details", "Confirm Delete?", parent=self.screen)
@@ -353,8 +361,10 @@ class User_Details:
 
     # Generate data set and take Sample using Opencv
     def generate_dataset(self):
-        if self.var_username.get() == "" or self.var_userid.get() == "":
+        if self.var_username.get() == "" or self.var_userid.get() == "" :
             messagebox.showerror("Error", "All field Required", parent=self.screen)
+        if self.var_photoRB.get()=="No" or self.var_photoRB.get()=="":
+            messagebox.showerror("Error", "Select Photo to take photo.", parent=self.screen)
         else:
             try:
                 conn = mysql.connector.connect(host="localhost",
@@ -425,7 +435,6 @@ class User_Details:
                                        database="attendance_system"
                                        )
         my_cursor = conn.cursor()
-        # my_cursor.execute("select * from users where " + str(self.var_searchby.get()) + " LIKE '%" + str(self.var_searchentry.get()) + "%'")
         my_cursor.execute("select * from users where Userid= " + str(self.var_searchentry.get()) + "")
         data = my_cursor.fetchall()
 

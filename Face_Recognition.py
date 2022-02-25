@@ -32,8 +32,6 @@ class Face_Recognition:
 
     # Attendance Function
     def mark_attendance(self, i, n):
-        #filename = str(datetime.now())+'.csv'
-        #with open(filename, "r+", newline="\n") as f:
         with open("attendance.csv", "r+", newline="\n") as f:
             myDataList = f.readlines()
             name_list = []
@@ -59,7 +57,7 @@ class Face_Recognition:
             coord = []
             # For making rectangle
             for (x, y, w, h) in features:
-                cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 3)
+                cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 id, predict = clf.predict(gray_image[y:y + h, x:x + w])
                 confidence = int((100 * (1 - (predict / 300))))
 
@@ -82,12 +80,12 @@ class Face_Recognition:
 
                 # Condition for Confidence greater than 75%
                 if confidence > 80:
-                    cv2.putText(img, f"Userid:{i}", (x, y - 55), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 3)
-                    cv2.putText(img, f"Username:{n}", (x, y - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 3)
+                    cv2.putText(img, f"Userid:{i}", (x, y - 55), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+                    cv2.putText(img, f"Username:{n}", (x, y - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
                     self.mark_attendance(i, n)
                 else:
-                    cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 3)
-                    cv2.putText(img, "Unknown Face", (x, y - 50), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 3)
+                    cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
+                    cv2.putText(img, "Unknown Face", (x, y - 50), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
                 coord = [x, y, w, h]
             return coord
 
