@@ -52,10 +52,8 @@ class Attendance_Details:
                                  bg="white")
         Upper_frame.place(x=20, y=20, width=1140, height=150)
 
-
-
         Export_btn = ttk.Button(Upper_frame, text="Export Data", command=self.export_csv, width=15, cursor="hand2")
-        Export_btn.grid(row=0,column=1,padx=50,pady=20)
+        Export_btn.grid(row=0, column=1, padx=50, pady=20)
         # Update Buttons
 
         # Search By ID
@@ -143,7 +141,6 @@ class Attendance_Details:
         self.Attendance_Report_tbl.pack(fill=BOTH, expand=1)
         self.Attendance_Report_tbl.bind("<ButtonRelease>", self.get_cursor)
 
-
     # To get data to the entry field
     def reset_search(self):
         global myData
@@ -151,7 +148,7 @@ class Attendance_Details:
         with open('attendance.csv', mode='r') as file:
             csvRead = csv.reader(file, delimiter=",")
             for i in csvRead:
-                    myData.append(i)
+                myData.append(i)
             self.fetchData(myData)
 
     # Button Function
@@ -164,13 +161,14 @@ class Attendance_Details:
     def import_csv(self):
         global myData
         myData.clear()
-        attenfile = open("attendance.csv")
-        csvRead = csv.reader(attenfile)
-        self.header = []
-        header = next(csvRead)
-        for i in csvRead:
-            myData.append(i)
-        self.fetchData(myData)
+        #attenfile = open("attendance.csv")
+        with open("attendance.csv") as file:
+            csvRead = csv.reader(file,delimiter=",")
+        #self.header = []
+        #header = next(csvRead)
+            for i in csvRead:
+                myData.append(i)
+            self.fetchData(myData)
 
     def export_csv(self):
         try:
@@ -207,7 +205,7 @@ class Attendance_Details:
             if not Update:
                 return
         if self.flag == 0:
-            messagebox.showinfo("Update", "Update Completed Succesfully!!!!", parent=self.screen)
+            messagebox.showinfo("Update", "Update Completed Successfully!!!!", parent=self.screen)
             self.import_csv()
         else:
             messagebox.showinfo("Update", "Student ID not found", parent=self.screen)
@@ -221,9 +219,11 @@ class Attendance_Details:
         self.var_time.set(rows[2])
         self.var_date.set(rows[3])
         self.var_status.set(rows[4])
+
     def update_data(self):
         i = self.var_attenid.get()
         self.update_attendance(i)
+
     # Search BY ID Function
     def search_databyDATE(self):
         global myData
