@@ -17,17 +17,13 @@ class Attendance_Details:
         self.screen.geometry("1280x720+150+75")
         self.screen.title("Attendance Details")
         self.screen.resizable(False, False)
-
-        img1 = Image.open(r"D:\FaceDetectionAndRecognition-v2\bg_gradient.jpg")
-        img1 = img1.resize((1280, 720), Image.ANTIALIAS)
-        self.photo_img1 = ImageTk.PhotoImage(img1)
-        bg_img = Label(self.screen, image=self.photo_img1)
-        bg_img.place(x=0, y=0)
+        main_frame = Frame(self.screen, bg="#8ABECC")
+        main_frame.place(x=0, y=0, width=1280, height=720)
 
         # Button for Back
         self.Back_icon = ImageTk.PhotoImage(
             Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Back_Frame.png"))
-        back_btn = ttk.Button(bg_img,
+        back_btn = ttk.Button(main_frame,
                               text="Back",
                               command=self.back_screen,
                               cursor="hand2",
@@ -37,10 +33,13 @@ class Attendance_Details:
 
         # Variables Define
         self.var_attenid = StringVar()
-        #self.var_attenname = StringVar()
+        self.var_attenname = StringVar()
+        # self.var_roll = StringVar()
+        # self.var_course = StringVar()
+        # self.var_faculty = StringVar()
+        self.var_time = StringVar()
         self.var_date = StringVar()
-        #self.var_time = StringVar()
-        #self.var_status = StringVar()
+        self.var_status = StringVar()
 
         Label(screen, text="Attendance Details", font=("Print Bold", 36), fg="SteelBlue4").place(relx=0.35, rely=0.01)
 
@@ -53,9 +52,11 @@ class Attendance_Details:
                                  bg="white")
         Upper_frame.place(x=20, y=20, width=1140, height=150)
 
-        # Reset Buttons
-        Import_btn = ttk.Button(Upper_frame, text="Import Data", command=self.import_csv, width=15, cursor="hand2")
-        Import_btn.grid(row=0, column=1, padx=50, pady=20)
+
+
+        Export_btn = ttk.Button(Upper_frame, text="Export Data", command=self.export_csv, width=15, cursor="hand2")
+        Export_btn.grid(row=0,column=1,padx=50,pady=20)
+        # Update Buttons
 
         # Search By ID
         # Attendance Label
@@ -80,6 +81,13 @@ class Attendance_Details:
                                           )
         Attendance_date_entry.grid(row=1, column=4, padx=20, pady=10)
 
+        Attendance_label = Label(Upper_frame, text="Attendance Status:", font=("Montserrat semi-bold", 12), bg="white")
+        Attendance_label.grid(row=0, column=6, padx=10, pady=10)
+        # Attendance Radio
+        r1 = ttk.Radiobutton(Upper_frame, text="Present", variable=self.var_status, value="Present")
+        r1.grid(row=0, column=7, padx=10, pady=10)
+        r2 = ttk.Radiobutton(Upper_frame, text="Absent", variable=self.var_status, value="Absent")
+        r2.grid(row=0, column=8, padx=10, pady=10)
         # Search Buttons
         Search_btn = ttk.Button(Upper_frame, text="Search by ID",
                                 command=self.search_databyID,
@@ -95,7 +103,8 @@ class Attendance_Details:
         # Reset Buttons
         Reset_btn = ttk.Button(Upper_frame, text="Reset Search", command=self.reset_search, width=15, cursor="hand2")
         Reset_btn.grid(row=1, column=6, padx=10, pady=10)
-
+        Update_btn = ttk.Button(Upper_frame, text="Update Data", command=self.update_data, width=15, cursor="hand2")
+        Update_btn.grid(row=1, column=7, padx=10, pady=10)
         # Lower Frame
         Lower_frame = LabelFrame(main_frame, bd=2, text="Attendance Details of User", font=("Print Bold", 18),
                                  labelanchor="n",
@@ -130,8 +139,9 @@ class Attendance_Details:
         self.Attendance_Report_tbl.column("time", width=50)
         self.Attendance_Report_tbl.column("date", width=50)
         self.Attendance_Report_tbl.column("status", width=75)
+        self.import_csv()
         self.Attendance_Report_tbl.pack(fill=BOTH, expand=1)
-
+        self.Attendance_Report_tbl.bind("<ButtonRelease>", self.get_cursor)
 
 
     # To get data to the entry field
@@ -154,15 +164,66 @@ class Attendance_Details:
     def import_csv(self):
         global myData
         myData.clear()
-        file_name = filedialog.askopenfilename(initialdir=os.getcwd(), title="Open CSV",
-                                               filetypes=(("CSV File", "*.csv"), ("All File", "*.*")),
-                                               parent=self.screen)
-        with open(file_name) as myFile:
-            csvRead = csv.reader(myFile, delimiter=",")
-            for i in csvRead:
-                myData.append(i)
-            self.fetchData(myData)
+        attenfile = open("attendance.csv")
+        csvRead = csv.reader(attenfile)
+        self.header = []
+        header = next(csvRead)
+        for i in csvRead:
+            myData.append(i)
+        self.fetchData(myData)
 
+    def export_csv(self):
+        try:
+            if len(myData) < 1:
+                messagebox.showerror("Error", "No Data Found!", parent=self.screen)
+                return False
+            file_name = filedialog.asksaveasfilename(initialdir=os.getcwd(), title="Open CSV",
+                                                     filetypes=(("CSV File", "*.csv"), ("All File", "*.*")),
+                                                     parent=self.screen)
+            with open(file_name, mode="w", newline="") as myFile:
+                exp_write = csv.writer(myFile, delimiter=",")
+                for i in myData:
+                    exp_write.writerow(i)
+                messagebox.showinfo("Data Export", "Data Export to '" + os.path.basename(file_name) + "' Successfully")
+        except Exception as es:
+            messagebox.showerror("Error", f"Due to :{str(es)}", parent=self.screen)
+
+    def update_attendance(self, i):
+        self.flag = -1
+        Update = messagebox.askyesno("Update", "Do you want to update details?", parent=self.screen)
+        if Update > 0:
+            with open("attendance.csv", "r+") as f:
+                myDataList = f.readlines()
+                name_list = []
+            with open("attendance.csv", "w") as new:
+                for line in myDataList:
+                    entry = line.split((","))  # kiran,2
+                    if entry[0] == i:
+                        new.write(f"{entry[0]},{entry[1]},{entry[2]},{entry[3]},{self.var_status.get()}")
+                        self.flag = 0
+                    else:
+                        new.write(f"{entry[0]},{entry[1]},{entry[2]},{entry[3]},{entry[4]}")
+        else:
+            if not Update:
+                return
+        if self.flag == 0:
+            messagebox.showinfo("Update", "Update Completed Succesfully!!!!", parent=self.screen)
+            self.import_csv()
+        else:
+            messagebox.showinfo("Update", "Student ID not found", parent=self.screen)
+
+    def get_cursor(self, event=""):
+        cursor_row = self.Attendance_Report_tbl.focus()
+        context = self.Attendance_Report_tbl.item(cursor_row)
+        rows = context["values"]
+        self.var_attenid.set(rows[0])
+        self.var_attenname.set(rows[1])
+        self.var_time.set(rows[2])
+        self.var_date.set(rows[3])
+        self.var_status.set(rows[4])
+    def update_data(self):
+        i = self.var_attenid.get()
+        self.update_attendance(i)
     # Search BY ID Function
     def search_databyDATE(self):
         global myData

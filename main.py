@@ -1,13 +1,22 @@
+import os
 from tkinter import *
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
 import mysql.connector
 from Dashboard import Dashboard_Admin
-
+import re
 
 def main():
     win = Tk()
     app = Attendance_System(win)
+    def on_closing():
+
+        exit = messagebox.askyesno("Update", "Do you want to quit?")
+        if exit > 0:
+            win.destroy()
+        elif not exit:
+            return
+    win.protocol("WM_DELETE_WINDOW", on_closing)
     win.mainloop()
 
 
@@ -18,8 +27,9 @@ class Attendance_System:
         self.screen.geometry("350x400+550+200")
         self.screen.title("Login")
         self.screen.resizable(False, False)
-
-        # bg_COLOR
+        self.path =os.getcwd()
+        # bg_gradient
+        self.path= os.getcwd()
         main_frame = Frame(self.screen, bg="#8ABECC")
         main_frame.place(x=0, y=0, width=350, height=400)
 
@@ -55,7 +65,7 @@ class Attendance_System:
         self.username_entry.pack()
 
         # Username Icon Image
-        uiconimg = Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Username_Frame.png")
+        uiconimg = Image.open(self.path+"/icons/Username_Frame.png")
         self.User_icon = ImageTk.PhotoImage(uiconimg)
         usericon = Label(uframe, image=self.User_icon, bg="white")
         usericon.place(x=5, y=-3)
@@ -70,7 +80,7 @@ class Attendance_System:
         self.password_entry.pack()
 
         # Password Icon Image
-        piconimg = Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Password_Frame.png")
+        piconimg = Image.open(self.path+"/icons/Password_Frame.png")
         self.pass_icon = ImageTk.PhotoImage(piconimg)
         passwordicon = Label(pframe, image=self.pass_icon, bg="white")
         passwordicon.place(x=5, y=0)
@@ -85,16 +95,14 @@ class Attendance_System:
         rbutton.place(x=25, y=190, height=30, width=75)
 
 
-
     # Login Function
     def login(self):
-        ##########################################
-        # Function to show Error and success
+
         def show_error():
             main_showFrame = Frame(self.screen)
             main_showFrame.place(x=90, y=240, height=21, width=180)
             self.error_icon = ImageTk.PhotoImage(
-                Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Icon=ErrorR_Frame.png"))
+                Image.open(self.path+"/icons/Icon=ErrorR_Frame.png"))
             error_icon = Label(main_showFrame, image=self.error_icon, bg="white")
             error_icon.place(x=0, y=0)
             error_label = Label(main_showFrame, text="Invalid Username and Password!!", font=("open sans condensed", 9),
@@ -105,7 +113,7 @@ class Attendance_System:
             main_showFrame = Frame(self.screen, bg="white")
             main_showFrame.place(x=90, y=240, height=21, width=180)
             self.success_icon = ImageTk.PhotoImage(
-                Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Icon=Success_Frame.png"))
+                Image.open(self.path+"/icons/Icon=Success_Frame.png"))
             success_icon = Label(main_showFrame, image=self.success_icon, bg="white")
             success_icon.place(x=20, y=2)
             success_label = Label(main_showFrame, text="Login Successfully!!", font=("open sans condensed", 9),
@@ -116,12 +124,10 @@ class Attendance_System:
             main_showFrame = Frame(self.screen, bg="white")
             main_showFrame.place(x=90, y=240, height=21, width=180)
 
-
-
-        ############################################
         # Main Code
         if self.username_entry.get() == "" or self.password_entry.get() == "":
             show_error()
+
         else:
             conn = mysql.connector.connect(host="localhost",
                                            user="root",
@@ -136,16 +142,11 @@ class Attendance_System:
                 show_error()
             else:
                 show_success()
-                self.username_entry.delete(0, END)
-                self.password_entry.delete(0, END)
-
                 self.screen = Toplevel(self.screen)
                 self.app = Dashboard_Admin(self.screen)
 
-
             conn.commit()
             conn.close()
-
 
     def register_window(self):
         self.new_window = Toplevel(self.screen)
@@ -159,11 +160,10 @@ class Register_Admin:
         self.screen.geometry("500x600+150+100")
         self.screen.title("Register Admin")
         self.screen.resizable(False, False)
-
+        self.path = os.getcwd()
         # bg_gradient
         main_frame = Frame(self.screen, bg="#8ABECC")
         main_frame.place(x=0, y=0, width=500, height=600)
-
 
         # Text variable
         self.var_name = StringVar()
@@ -188,7 +188,7 @@ class Register_Admin:
         name_entry.place(x=30, y=70)
 
         # Name Icon Image
-        uiconimg = Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Username_Frame.png")
+        uiconimg = Image.open(self.path+"/icons/Username_Frame.png")
         self.User_icon1 = ImageTk.PhotoImage(uiconimg)
         usericon1 = Label(main_frame, image=self.User_icon1, bg="white")
         usericon1.place(x=30, y=39)
@@ -200,7 +200,7 @@ class Register_Admin:
         username_entry.place(x=205, y=70)
 
         # Username Icon Image
-        uiconimg = Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Username_Frame.png")
+        uiconimg = Image.open(self.path+"/icons/Username_Frame.png")
         self.User_icon2 = ImageTk.PhotoImage(uiconimg)
         usericon2 = Label(main_frame, image=self.User_icon2, bg="white")
         usericon2.place(x=205, y=39)
@@ -212,7 +212,7 @@ class Register_Admin:
         contact_entry.place(x=30, y=145)
 
         # Contact Icon Image
-        contacticonimg = Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Contact_Frame.png")
+        contacticonimg = Image.open(self.path+"/icons/Contact_Frame.png")
         self.Contact_icon = ImageTk.PhotoImage(contacticonimg)
         contacticon = Label(main_frame, image=self.Contact_icon, bg="white")
         contacticon.place(x=30, y=117)
@@ -224,7 +224,7 @@ class Register_Admin:
         email_entry.place(x=205, y=145)
 
         #  Email Icon Image
-        emailiconimg = Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Email_Frame.png")
+        emailiconimg = Image.open(self.path+"/icons/Email_Frame.png")
         self.Email_icon = ImageTk.PhotoImage(emailiconimg)
         emailicon = Label(main_frame, image=self.Email_icon, bg="white")
         emailicon.place(x=205, y=117)
@@ -236,7 +236,7 @@ class Register_Admin:
         password_entry.place(x=30, y=220)
 
         # Password Icon Image
-        piconimg = Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Password_Frame.png")
+        piconimg = Image.open(self.path+"/icons/Password_Frame.png")
         self.pass_icon = ImageTk.PhotoImage(piconimg)
         passwordicon = Label(main_frame, image=self.pass_icon, bg="white")
         passwordicon.place(x=30, y=192)
@@ -248,7 +248,7 @@ class Register_Admin:
         confirm_password_entry.place(x=205, y=220)
 
         # Password Icon Image
-        piconimg = Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Password_Frame.png")
+        piconimg = Image.open(self.path+"/icons/Password_Frame.png")
         self.pass1_icon = ImageTk.PhotoImage(piconimg)
         password1icon = Label(main_frame, image=self.pass1_icon, bg="white")
         password1icon.place(x=205, y=192)
@@ -257,23 +257,21 @@ class Register_Admin:
         checkbtn = Checkbutton(main_frame, text="Agree Terms And Condition.", font=("Print Bold", 12),
                                variable=self.var_checkbutton, onvalue=1,
                                offvalue=0, takefocus=0,
-                               command=self.button_activate,
                                bg="white")
         checkbtn.place(x=30, y=260)
 
         # Register Button
         rbutton = ttk.Button(main_frame, text="Register", command=self.register_user, cursor="hand2", width=20)
         rbutton.place(x=30, y=320)
+        self
 
     # FUnction Dec For Button
     def register_user(self):
-
-        # Function For validation
         def show_error1():
             main_showFrame = Frame(self.screen, bg="white")
             main_showFrame.place(x=90, y=380, height=21, width=180)
             self.error_icon = ImageTk.PhotoImage(
-                Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Icon=ErrorR_Frame.png"))
+                Image.open(self.path+"/icons/Icon=ErrorR_Frame.png"))
             error_icon = Label(main_showFrame, image=self.error_icon, bg="white")
             error_icon.place(x=0, y=0)
             error_label = Label(main_showFrame, text="All Field Required!!", font=("open sans condensed", 9),
@@ -284,7 +282,7 @@ class Register_Admin:
             main_showFrame = Frame(self.screen, bg="white")
             main_showFrame.place(x=90, y=380, height=21, width=300)
             self.error_icon = ImageTk.PhotoImage(
-                Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Icon=ErrorR_Frame.png"))
+                Image.open(self.path+"/icons/Icon=ErrorR_Frame.png"))
             error_icon = Label(main_showFrame, image=self.error_icon, bg="white")
             error_icon.place(x=0, y=0)
             error_label = Label(main_showFrame, text="Password and Confirm Password must be same!!",
@@ -296,10 +294,30 @@ class Register_Admin:
             main_showFrame = Frame(self.screen, bg="white")
             main_showFrame.place(x=90, y=380, height=21, width=300)
             self.error_icon = ImageTk.PhotoImage(
-                Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Icon=ErrorR_Frame.png"))
+                Image.open(self.path+"/icons/Icon=ErrorR_Frame.png"))
             error_icon = Label(main_showFrame, image=self.error_icon, bg="white")
             error_icon.place(x=0, y=0)
             error_label = Label(main_showFrame, text="User Already Exist!!", font=("open sans condensed", 9),
+                                fg="red", bg="White")
+            error_label.place(x=22, y=0)
+        def show_error4():
+            main_showFrame = Frame(self.screen, bg="white")
+            main_showFrame.place(x=90, y=380, height=21, width=300)
+            self.error_icon = ImageTk.PhotoImage(
+                Image.open(self.path+"/icons/Icon=ErrorR_Frame.png"))
+            error_icon = Label(main_showFrame, image=self.error_icon, bg="white")
+            error_icon.place(x=0, y=0)
+            error_label = Label(main_showFrame, text="Enter valid phone number", font=("open sans condensed", 9),
+                                fg="red", bg="White")
+            error_label.place(x=22, y=0)
+        def show_error5():
+            main_showFrame = Frame(self.screen, bg="white")
+            main_showFrame.place(x=90, y=380, height=21, width=300)
+            self.error_icon = ImageTk.PhotoImage(
+                Image.open(self.path+"/icons/Icon=ErrorR_Frame.png"))
+            error_icon = Label(main_showFrame, image=self.error_icon, bg="white")
+            error_icon.place(x=0, y=0)
+            error_label = Label(main_showFrame, text="Invalid email", font=("open sans condensed", 9),
                                 fg="red", bg="White")
             error_label.place(x=22, y=0)
 
@@ -307,7 +325,7 @@ class Register_Admin:
             main_showFrame = Frame(self.screen, bg="white")
             main_showFrame.place(x=90, y=380, height=21, width=300)
             self.success_icon = ImageTk.PhotoImage(
-                Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Icon=Success_Frame.png"))
+                Image.open(self.path+"/icons/Icon=Success_Frame.png"))
             success_icon = Label(main_showFrame, image=self.success_icon, bg="white")
             success_icon.place(x=0, y=2)
             success_label = Label(main_showFrame, text="Register Successfully!!", font=("open sans condensed", 9),
@@ -320,7 +338,10 @@ class Register_Admin:
             show_error2()
         elif self.var_checkbutton.get() == 0:
             show_error1()
-
+        elif self.var_contact.get().isnumeric()== False:
+            show_error4()
+        elif self.check_email(self.var_email.get()) == False:
+            show_error5()
         else:
             conn = mysql.connector.connect(host="localhost",
                                            user="root",
@@ -348,7 +369,13 @@ class Register_Admin:
                 self.screen.after(500, lambda: self.screen.destroy())
             conn.commit()
             conn.close()
-
+    def check_email(self,email):
+        regex='^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+        if re.search(regex,email):
+            return True
+        else:
+            return False
 
 if __name__ == "__main__":
     main()
+
