@@ -15,14 +15,14 @@ class Face_Recognition:
 
     # Attendance Function
     def mark_attendance(self, i, n):
-        with open("attendance.csv", "r+", newline="\n") as f:
+        with open("attendance.csv", "r+",newline="\n") as f:
             myDataList = f.readlines()
             name_list = []
             for line in myDataList:
                 entry = line.split((","))  # kiran,2
                 name_list.append(entry[0])
             # mark present if not present
-            if ((i not in name_list) and (n not in name_list)):
+            if (i not in name_list) and (n not in name_list):
                 now = datetime.now()
                 d1 = now.strftime("%d/%m/%Y")
                 dtString = now.strftime("%H:%M:%S")
@@ -31,7 +31,6 @@ class Face_Recognition:
 
     # Face Recognition
     def face_recog(self):
-
         # Function To Draw Boundary
 
         def draw_boundary(img, classifier, scaleFactor, minNeighbors, color, text, clf):
