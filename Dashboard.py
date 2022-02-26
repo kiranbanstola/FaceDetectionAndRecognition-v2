@@ -1,6 +1,6 @@
 import os
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk,messagebox
 from PIL import ImageTk, Image
 from UserDetails import User_Details
 from Train import Train_Dataset
@@ -16,12 +16,9 @@ class Dashboard_Admin:
         self.screen.resizable(False, False)
 
         # bg_gradient
-        img1 = Image.open(r"D:\FaceDetectionAndRecognition-v2\bg_gradient.jpg")
-        img1 = img1.resize((600, 500), Image.ANTIALIAS)
-        self.photo_img1 = ImageTk.PhotoImage(img1)
-        bg_img = Label(self.screen, image=self.photo_img1)
-        bg_img.place(x=0, y=0)
 
+        main_frame = Frame(self.screen, bg="#1E1844")
+        main_frame.place(x=0, y=0, width=600, height=500)
         # Main Login Frame
         main_frame = Frame(self.screen, bg="white")
         main_frame.place(x=50, y=50, width=500, height=400)
@@ -89,6 +86,18 @@ class Dashboard_Admin:
                                      )
         openDataset_btn.place(x=220, y=120, width=130, height=45)
 
+        # Button for Logout Dataset
+        self.Logout_icon = ImageTk.PhotoImage(
+            Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Icon=Logout_Frame, Color= Black.png"))
+        logout_btn = ttk.Button(main_frame,
+                                     text="Logout",
+                                     command=self.logout,
+                                     cursor="hand2",
+                                     image=self.Logout_icon,
+                                     compound=LEFT
+                                     )
+        logout_btn.place(x=220, y=180, width=130, height=45)
+
         # Style For TKK
         style = ttk.Style()
         style.configure("TButton",
@@ -96,13 +105,13 @@ class Dashboard_Admin:
                         background='#fff',
                         foreground='#000')
 
-
-
     # Def for Opening Dataset
     def open_dataset(self):
         os.startfile("data")
 
+
     # Function Button
+
     def user_details(self):
         self.new_window = Toplevel(self.screen)
         self.app = User_Details(self.new_window)
@@ -118,6 +127,16 @@ class Dashboard_Admin:
     def attendance_data(self):
         self.new_window = Toplevel(self.screen)
         self.app = Attendance_Details(self.new_window)
+
+    def logout(self):
+        res = messagebox.askquestion('Exit Application',
+                             'Do you really want to exit')
+
+        if res == 'yes':
+            self.screen.destroy()
+
+        else :
+            pass
 
 
 if __name__ == "__main__":
