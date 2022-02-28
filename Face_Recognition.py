@@ -4,50 +4,33 @@ from PIL import Image, ImageTk
 import mysql.connector
 import cv2
 import csv
-import os
 from time import strftime
 from datetime import datetime
 
 
 class Face_Recognition:
     # Layout Design
-    def __init__(self, screen):
-        self.screen = screen
-        self.screen.geometry("400x200+200+150")
-        self.screen.title("Face Recognition")
-        self.screen.resizable(False, False)
-
-        # bg_gradient
-        img1 = Image.open(r"D:\FaceDetectionAndRecognition-v2\bg_gradient.jpg")
-        img1 = img1.resize((400, 200), Image.ANTIALIAS)
-        self.photo_img1 = ImageTk.PhotoImage(img1)
-        bg_img = Label(self.screen, image=self.photo_img1)
-        bg_img.place(x=0, y=0)
-        Label(self.screen, text="Face Recognition", font=("Print Bold", 24), fg="SteelBlue4", bg="powder blue").place(
-            relx=0.25, rely=0.05)
-
-        # Start_Button
-        start_button = ttk.Button(bg_img, command=self.face_recog, text="Start Recognition", cursor="hand2")
-        start_button.place(relx=0.25, rely=0.45, width=200, height=50)
+    def __init__(self):
+        self.face_recog()
 
     # Attendance Function
     def mark_attendance(self, i, n):
-        with open("attendance.csv", "r+", newline="\n") as f:
+        with open("attendance.csv", "r+",newline="\n") as f:
             myDataList = f.readlines()
             name_list = []
             for line in myDataList:
                 entry = line.split((","))  # kiran,2
                 name_list.append(entry[0])
             # mark present if not present
-            if ((i not in name_list) and (n not in name_list)):
+            if (i not in name_list) and (n not in name_list):
                 now = datetime.now()
                 d1 = now.strftime("%d/%m/%Y")
                 dtString = now.strftime("%H:%M:%S")
                 f.writelines(f"\n{i},{n},{dtString},{d1},Present")
 
+
     # Face Recognition
     def face_recog(self):
-
         # Function To Draw Boundary
 
         def draw_boundary(img, classifier, scaleFactor, minNeighbors, color, text, clf):
@@ -113,6 +96,4 @@ class Face_Recognition:
 
 
 if __name__ == "__main__":
-    screen = Tk()
-    obj = Face_Recognition(screen)
-    screen.mainloop()
+    Face_Recognition()

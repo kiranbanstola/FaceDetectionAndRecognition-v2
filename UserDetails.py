@@ -5,6 +5,9 @@ from PIL import Image, ImageTk
 from tkinter import messagebox
 import mysql.connector
 import cv2
+import re
+
+save_flag = 1
 
 
 class User_Details:
@@ -13,12 +16,9 @@ class User_Details:
         self.screen.geometry("1280x720+150+75")
         self.screen.title("User Details")
         self.screen.resizable(False, False)
-
-        img1 = Image.open(r"D:\FaceDetectionAndRecognition-v2\bg_gradient.jpg")
-        img1 = img1.resize((1280, 720), Image.ANTIALIAS)
-        self.photo_img1 = ImageTk.PhotoImage(img1)
-        bg_img = Label(self.screen, image=self.photo_img1)
-        bg_img.place(x=0, y=0)
+        self.photo_flag = -1
+        main_frame = Frame(self.screen, bg="#8ABECC")
+        main_frame.place(x=0, y=0, width=1280, height=720)
 
         Label(screen, text="Users Details", font=("Print Bold", 36), fg="SteelBlue4").place(relx=0.4, rely=0.01)
 
@@ -26,9 +26,10 @@ class User_Details:
         main_frame.place(x=50, y=100, width=1180, height=580)
 
         # Button for Back
+        path = os.getcwd()
         self.Back_icon = ImageTk.PhotoImage(
-            Image.open(r"D:\FaceDetectionAndRecognition-v2\icons\Back_Frame.png"))
-        back_btn = ttk.Button(bg_img,
+            Image.open(path + "/icons/Back_Frame.png"))
+        back_btn = ttk.Button(main_frame,
                               text="Back",
                               command=self.back_screen,
                               cursor="hand2",
@@ -44,7 +45,6 @@ class User_Details:
         self.var_dob = StringVar()
         self.var_phone = StringVar()
         self.var_gender = StringVar()
-        self.var_photoRB = StringVar()
 
         # Variable for Search  Option
         self.var_searchentry = StringVar()
@@ -105,16 +105,16 @@ class User_Details:
         r1.grid(row=0, column=5, padx=0, pady=0)
         r2 = ttk.Radiobutton(User_info_frame, variable=self.var_gender, text="Female", value="female")
         r2.grid(row=0, column=6, padx=20, pady=0)
-        # r3 = ttk.Radiobutton(User_info_frame, text="Other", value="other")
-        # r3.grid(row=2, column=3, padx=0, pady=0)
+        r3 = ttk.Radiobutton(User_info_frame, variable=self.var_gender, text="Other", value="other")
+        r3.grid(row=1, column=5, padx=0, pady=0)
 
         # DOB Label
         dob_label = Label(User_info_frame, text="DOB:", font=("Montserrat semi-bold", 12), bg="white")
         dob_label.grid(row=2, column=0, padx=10, pady=10)
         # DOB Entry
-        dob_entry = ttk.Entry(User_info_frame, textvariable=self.var_dob, width=10, font=("Montserrat semi-bold", 12))
+        dob_entry = ttk.Entry(User_info_frame, textvariable=self.var_dob, width=12, font=("Montserrat semi-bold", 10))
         dob_entry.grid(row=2, column=1, padx=10, pady=10)
-
+        dob_entry.insert(0, "MM/DD/YYYY")
         # Phone Label
         Phone_label = Label(User_info_frame, text="Phone:", font=("Montserrat semi-bold", 12), bg="white")
         Phone_label.grid(row=2, column=2, padx=10, pady=10)
@@ -122,16 +122,6 @@ class User_Details:
         Phone_entry = ttk.Entry(User_info_frame, textvariable=self.var_phone, width=20,
                                 font=("Montserrat semi-bold", 12))
         Phone_entry.grid(row=2, column=3, padx=10, pady=10)
-
-        # Radio Buttons For Photo
-        Photo_label = Label(User_info_frame, text="Photo:", font=("Montserrat semi-bold", 12), bg="white")
-        Photo_label.grid(row=1, column=4, padx=10, pady=0)
-
-        RB1 = ttk.Radiobutton(User_info_frame, variable=self.var_photoRB, text="Photo", value="Yes")
-        RB1.grid(row=1, column=5, padx=20, pady=0)
-
-        RB2 = ttk.Radiobutton(User_info_frame, variable=self.var_photoRB, text="No Photo", value="No")
-        RB2.grid(row=1, column=6, padx=20, pady=0)
 
         # Frame Containing Buttons
         Buttons_frame = Frame(Upper_frame, bg="white")
@@ -143,7 +133,7 @@ class User_Details:
         Update_btn = ttk.Button(Buttons_frame, command=self.update_data, text="Update", width=15, cursor="hand2")
         Update_btn.grid(row=0, column=1, padx=15, pady=10)
         # Delete Buttons
-        Delete_btn = ttk.Button(Buttons_frame, command=lambda:[self.delete_data,self.delete_photo], text="Delete", width=15, cursor="hand2")
+        Delete_btn = ttk.Button(Buttons_frame, command=self.delete_data, text="Delete", width=15, cursor="hand2")
         Delete_btn.grid(row=0, column=2, padx=15, pady=10)
         # Save Buttons
         Save_btn = ttk.Button(Buttons_frame, command=self.add_data, text="Save", width=15, cursor="hand2")
@@ -154,7 +144,8 @@ class User_Details:
         Take_photo_btn.grid(row=0, column=4, padx=15, pady=10)
 
         # Search System
-        SearchLabel_frame = LabelFrame(main_frame, bd=2, text="Search Details", bg="white", labelanchor="n" ,font=("Print Bold", 18))
+        SearchLabel_frame = LabelFrame(main_frame, bd=2, text="Search Details", bg="white", labelanchor="n",
+                                       font=("Print Bold", 18))
         SearchLabel_frame.place(x=875, y=50, width=250, height=150)
 
         # Details Label
@@ -182,7 +173,8 @@ class User_Details:
         scroll_y = ttk.Scrollbar(Table_Details_frame, orient=VERTICAL)
 
         self.user_table = ttk.Treeview(Table_Details_frame, columns=(
-            "userid", "username", "roll", "email", "gender", "dob", "phone", "photo"), xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
+            "userid", "username", "roll", "email", "gender", "dob", "phone"), xscrollcommand=scroll_x.set,
+                                       yscrollcommand=scroll_y.set)
         scroll_x.pack(side=BOTTOM, fill=X)
         scroll_y.pack(side=RIGHT, fill=Y)
         scroll_x.config(command=self.user_table.xview)
@@ -196,26 +188,34 @@ class User_Details:
         self.user_table.heading("gender", text="Gender")
         self.user_table.heading("dob", text="Birth Date")
         self.user_table.heading("phone", text="Phone Number")
-        self.user_table.heading("photo", text="Photo Sample")
         self.user_table["show"] = "headings"
-
         self.user_table.column("userid", width=75)
         self.user_table.column("username", width=100)
         self.user_table.column("roll", width=50)
         self.user_table.column("email", width=120)
         self.user_table.column("gender", width=50)
         self.user_table.column("dob", width=100)
-        self.user_table.column("phone", width=100)
-        self.user_table.column("photo", width=100)
-
         self.user_table.pack(fill=BOTH, expand=1)
         self.user_table.bind("<ButtonRelease>", self.get_cursor)
         self.fetch_data()
 
     # Function Dec
     def add_data(self):
-        if self.var_username.get() == "" or self.var_userid.get() == "":
+        if self.var_username.get() == "" or self.var_userid.get() == "" or self.var_roll.get() == "" or self.var_email.get() == "" or self.var_phone.get() == "" \
+                or self.var_gender.get() == "" or self.var_dob.get() == "MM/DD/YY":
             messagebox.showerror("Error", "All field Required", parent=self.screen)
+        elif not self.var_userid.get().isnumeric():
+            messagebox.showerror("Error", "Enter number for ID", parent=self.screen)
+        elif not self.var_roll.get().isnumeric():
+            messagebox.showerror("Error", "Enter number for roll", parent=self.screen)
+        elif not self.var_phone.get().isnumeric():
+            messagebox.showerror("Error", "Enter valid phone number", parent=self.screen)
+        elif not self.check_email(self.var_email.get()):
+            messagebox.showerror("Error", "Invalid email", parent=self.screen)
+        elif not self.is_date(self.var_dob.get()):
+            messagebox.showerror("Error", "Invalid Date!!Enter Date in MM/DD/YY format", parent=self.screen)
+        elif self.photo_flag == -1:
+            messagebox.showerror("Error", "Take Photo", parent=self.screen)
         else:
             try:
                 conn = mysql.connector.connect(host="localhost",
@@ -224,7 +224,7 @@ class User_Details:
                                                database="attendance_system"
                                                )
                 my_cursor = conn.cursor()
-                my_cursor.execute("insert into users values(%s,%s,%s,%s,%s,%s,%s,%s)", (
+                my_cursor.execute("insert into users values(%s,%s,%s,%s,%s,%s,%s)", (
                     self.var_userid.get(),
                     self.var_username.get(),
                     self.var_roll.get(),
@@ -232,15 +232,17 @@ class User_Details:
                     self.var_gender.get(),
                     self.var_dob.get(),
                     self.var_phone.get(),
-                    self.var_photoRB.get(),
                 ))
                 conn.commit()
                 self.fetch_data()
                 conn.close()
+                global save_flag
+                save_flag = 0
                 messagebox.showinfo("Success", "Student Details Added Successfully", parent=self.screen)
 
             except Exception as es:
                 messagebox.showerror("Error", f"Due to :{str(es)}", parent=self.screen)
+                self.delete_photo(self.var_userid.get())
 
     # Function to Fetch Data From Database to Details
     def fetch_data(self):
@@ -272,12 +274,20 @@ class User_Details:
         self.var_gender.set(data[4]),
         self.var_dob.set(data[5]),
         self.var_phone.set(data[6]),
-        self.var_photoRB.set(data[7]),
 
     # Update Function
     def update_data(self):
-        if self.var_username.get() == "" or self.var_userid.get() == "Yes":
-            messagebox.showerror("Error", "Field Required", parent=self.screen)
+        if self.var_username.get() == "" or self.var_userid.get() == "" or self.var_roll.get() == "" or self.var_email.get() == "" or self.var_phone.get() == "" \
+                or self.var_gender.get() == "" or self.var_dob.get() == "":
+            messagebox.showerror("Error", "All field Required", parent=self.screen)
+        elif self.var_userid.get().isnumeric() == False:
+            messagebox.showerror("Error", "Enter number for ID", parent=self.screen)
+        elif self.var_roll.get().isnumeric() == False:
+            messagebox.showerror("Error", "Enter number for roll", parent=self.screen)
+        elif self.var_phone.get().isnumeric() == False:
+            messagebox.showerror("Error", "Enter valid phone number", parent=self.screen)
+        elif self.check_email(self.var_email.get()) == False:
+            messagebox.showerror("Error", "Invalid email", parent=self.screen)
         else:
             try:
                 Update = messagebox.askyesno("Update", "Do you want to update details?", parent=self.screen)
@@ -289,7 +299,7 @@ class User_Details:
                                                    )
                     my_cursor = conn.cursor()
                     my_cursor.execute(
-                        "update users set Username=%s, Rollno=%s, Email=%s, Gender=%s, DOB=%s, Phone=%s, Photo=%s where Userid=%s ",
+                        "update users set Username=%s, Rollno=%s, Email=%s, Gender=%s, DOB=%s, Phone=%s where Userid=%s ",
                         (
                             self.var_username.get(),
                             self.var_roll.get(),
@@ -297,7 +307,6 @@ class User_Details:
                             self.var_gender.get(),
                             self.var_dob.get(),
                             self.var_phone.get(),
-                            self.var_photoRB.get(),
                             self.var_userid.get()
                         ))
                 else:
@@ -310,13 +319,6 @@ class User_Details:
                 conn.close()
             except Exception as es:
                 messagebox.showerror("Error", f"Due to :{str(es)}", parent=self.screen)
-
-    def delete_photo(self, id):
-        path = os.getcwd()
-        for filename in os.listdir('D:/FaceDetectionAndRecognition-v2/data'):
-            if filename.startswith('user.'+str(id)):
-                os.remove('D:/FaceDetectionAndRecognition-v2/data/'+filename)
-
 
     # Delete Function
     def delete_data(self):
@@ -338,7 +340,7 @@ class User_Details:
                 else:
                     if not delete:
                         return
-
+                self.delete_photo(self.var_userid.get())
                 conn.commit()
                 self.fetch_data()
                 conn.close()
@@ -357,44 +359,17 @@ class User_Details:
         self.var_gender.set("")
         self.var_dob.set("")
         self.var_phone.set("")
-        self.var_photoRB.set("")
 
     # Generate data set and take Sample using Opencv
     def generate_dataset(self):
-        if self.var_username.get() == "" or self.var_userid.get() == "" :
-            messagebox.showerror("Error", "All field Required", parent=self.screen)
-        if self.var_photoRB.get()=="No" or self.var_photoRB.get()=="":
-            messagebox.showerror("Error", "Select Photo to take photo.", parent=self.screen)
+
+        if self.var_username.get() == "":
+            messagebox.showerror("Error", "Username required", parent=self.screen)
+
+        elif self.var_userid.get() == "":
+            messagebox.showerror("Error", "ID required", parent=self.screen)
         else:
             try:
-                conn = mysql.connector.connect(host="localhost",
-                                               user="root",
-                                               password="root",
-                                               database="attendance_system"
-                                               )
-                my_cursor = conn.cursor()
-                my_cursor.execute("select * from users")
-                myresult = my_cursor.fetchall()
-                id = 0
-                for x in myresult:
-                    id += 1
-                my_cursor.execute(
-                    "update users set Username=%s, Rollno=%s,  Email=%s, Gender=%s, DOB=%s, Phone=%s, Photo=%s where Userid=%s ",
-                    (
-                        self.var_username.get(),
-                        self.var_roll.get(),
-                        self.var_email.get(),
-                        self.var_gender.get(),
-                        self.var_dob.get(),
-                        self.var_phone.get(),
-                        self.var_photoRB.get(),
-                        self.var_userid.get() == id + 1
-                    ))
-                conn.commit()
-                self.fetch_data()
-                self.reset_data()
-                conn.close()
-
                 # Load haarcascade_frontalface_default from opencv
                 face_classifier = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 
@@ -414,7 +389,7 @@ class User_Details:
                         img_id += 1
                         face = cv2.resize(face_cropped(my_frame), (450, 450))
                         face = cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
-                        file_name_path = "data/user." + str(id) + "." + str(img_id) + ".jpg"
+                        file_name_path = "data/user." + str(self.var_userid.get()) + "." + str(img_id) + ".jpg"
                         cv2.imwrite(file_name_path, face)
                         cv2.putText(face, str(img_id), (50, 50), cv2.FONT_ITALIC, 2, (0, 255, 0), 2)
                         cv2.imshow("Cropped Face", face)
@@ -423,9 +398,12 @@ class User_Details:
                         break
                 cap.release()
                 cv2.destroyAllWindows()
-                messagebox.showinfo("Result", "Generating Dataset Completed!!!!")
+                global save_flag
+                save_flag = -1
+                messagebox.showinfo("Result", "Generating Dataset Completed!!!!", parent=self.screen)
             except Exception as es:
                 messagebox.showerror("Error", f"Due to :{str(es)}", parent=self.screen)
+            self.photo_flag = 0
 
     # Search Function
     def search_data(self):
@@ -445,11 +423,55 @@ class User_Details:
             conn.commit()
         conn.close()
 
+    def delete_photo(self, id):
+        path = os.getcwd()
+        for filename in os.listdir(path + '/data'):
+            if filename.startswith('user.' + str(id)):
+                os.remove(path + '/data/' + filename)
+
     def back_screen(self):
-        self.screen.destroy()
+        global save_flag
+        if save_flag == 0 or save_flag == 1:
+            self.screenscreen.destroy()
+        else:
+            exit = messagebox.askyesno("Update", "Do you want to quit without saving?")
+            if exit > 0:
+                self.delete_photo(self.var_userid.get())
+                self.screen.destroy()
+            elif not exit:
+                return
+
+    def check_email(self, email):
+        regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+        if re.search(regex, email):
+            return True
+        else:
+            return False
+
+    def is_date(self, date):
+        regex = "^([1-9]|1[0-2])(/|-)([1-9]|1[0-9]|2[0-9]|3[0-1])(/|-)(19[0-9][0-9]|20[0-2][0-9])$"
+        if re.search(regex, date):
+            return True
+        else:
+            return False
 
 
 if __name__ == "__main__":
     screen = Tk()
     obj = User_Details(screen)
+
+
+    def on_closing():
+        if save_flag == 0 or save_flag == 1:
+            screen.destroy()
+        else:
+            exit = messagebox.askyesno("Update", "Do you want to quit without saving?")
+            if exit > 0:
+                obj.delete_photo(obj.var_userid.get())
+                screen.destroy()
+            elif not exit:
+                return
+
+
+    screen.protocol("WM_DELETE_WINDOW", on_closing)
     screen.mainloop()
