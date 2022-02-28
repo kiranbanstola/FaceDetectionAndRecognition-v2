@@ -1,6 +1,0 @@
-This is the project for Attendance System Using Python, OpenCV, Tkinter GUI,& MySQL Database
-
-
-Algorithm To Be Used
--Haarcascade OpenCV
--LBPH OpenCV
