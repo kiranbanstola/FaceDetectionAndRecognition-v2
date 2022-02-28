@@ -22,8 +22,7 @@ class User_Details:
 
         Label(screen, text="Users Details", font=("Print Bold", 36), fg="SteelBlue4").place(relx=0.4, rely=0.01)
 
-        main_frame = Frame(self.screen, bg="white", highlightthickness=2, highlightbackground="black")
-        main_frame.place(x=50, y=100, width=1180, height=580)
+
 
         # Button for Back
         path = os.getcwd()
@@ -36,6 +35,9 @@ class User_Details:
                               image=self.Back_icon,
                               compound=LEFT)
         back_btn.place(x=50, y=30, width=100, height=35)
+
+        main_frame = Frame(self.screen, bg="white", highlightthickness=2, highlightbackground="black")
+        main_frame.place(x=50, y=100, width=1180, height=580)
 
         # Variables Define
         self.var_userid = StringVar()
@@ -432,7 +434,7 @@ class User_Details:
     def back_screen(self):
         global save_flag
         if save_flag == 0 or save_flag == 1:
-            self.screenscreen.destroy()
+            self.screen.destroy()
         else:
             exit = messagebox.askyesno("Update", "Do you want to quit without saving?")
             if exit > 0:
