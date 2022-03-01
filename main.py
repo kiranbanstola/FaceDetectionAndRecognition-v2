@@ -378,4 +378,3 @@ class Register_Admin:
 
 if __name__ == "__main__":
     main()
-
