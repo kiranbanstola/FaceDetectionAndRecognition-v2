@@ -1,8 +1,8 @@
 import os
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk, messagebox
+from tkinter.filedialog import askopenfilename
 from PIL import Image, ImageTk
-from tkinter import messagebox
 import mysql.connector
 import cv2
 import re
@@ -21,8 +21,6 @@ class User_Details:
         main_frame.place(x=0, y=0, width=1280, height=720)
 
         Label(screen, text="Users Details", font=("Print Bold", 36), fg="SteelBlue4").place(relx=0.4, rely=0.01)
-
-
 
         # Button for Back
         path = os.getcwd()
@@ -130,20 +128,25 @@ class User_Details:
         Buttons_frame.place(x=50, y=150, width=750, height=50)
         # Reset Buttons
         Reset_btn = ttk.Button(Buttons_frame, command=self.reset_data, text="Reset", width=15, cursor="hand2")
-        Reset_btn.grid(row=0, column=0, padx=15, pady=10)
+        Reset_btn.grid(row=0, column=0, padx=10, pady=10)
         # Update Buttons
         Update_btn = ttk.Button(Buttons_frame, command=self.update_data, text="Update", width=15, cursor="hand2")
-        Update_btn.grid(row=0, column=1, padx=15, pady=10)
+        Update_btn.grid(row=0, column=1, padx=10, pady=10)
         # Delete Buttons
         Delete_btn = ttk.Button(Buttons_frame, command=self.delete_data, text="Delete", width=15, cursor="hand2")
-        Delete_btn.grid(row=0, column=2, padx=15, pady=10)
+        Delete_btn.grid(row=0, column=2, padx=10, pady=10)
         # Save Buttons
         Save_btn = ttk.Button(Buttons_frame, command=self.add_data, text="Save", width=15, cursor="hand2")
-        Save_btn.grid(row=0, column=3, padx=15, pady=10)
+        Save_btn.grid(row=0, column=3, padx=10, pady=10)
         # Take Photo Buttons
-        Take_photo_btn = ttk.Button(Buttons_frame, command=self.generate_dataset, text="Take Photo", width=15,
+        Take_photo_btn = ttk.Button(Buttons_frame, command=self.generate_datasetbyWebcam, text="Take Photo", width=15,
                                     cursor="hand2")
-        Take_photo_btn.grid(row=0, column=4, padx=15, pady=10)
+        Take_photo_btn.grid(row=0, column=4, padx=10, pady=10)
+
+        Upload_video_btn = ttk.Button(Buttons_frame, command=self.generate_datasetbyVideo, text="Upload Video",
+                                      width=15,
+                                      cursor="hand2")
+        Upload_video_btn.grid(row=0, column=5, padx=10, pady=10)
 
         # Search System
         SearchLabel_frame = LabelFrame(main_frame, bd=2, text="Search Details", bg="white", labelanchor="n",
@@ -362,8 +365,8 @@ class User_Details:
         self.var_dob.set("")
         self.var_phone.set("")
 
-    # Generate data set and take Sample using Opencv
-    def generate_dataset(self):
+    # Generate data by webcam set and take Sample using Opencv
+    def generate_datasetbyWebcam(self):
 
         if self.var_username.get() == "":
             messagebox.showerror("Error", "Username required", parent=self.screen)
@@ -372,7 +375,7 @@ class User_Details:
             messagebox.showerror("Error", "ID required", parent=self.screen)
         else:
             try:
-                # Load haarcascade_frontalface_default from opencv
+                # Load haarcascade frontalface default from opencv
                 face_classifier = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 
                 def face_cropped(img):
@@ -384,6 +387,52 @@ class User_Details:
                         return face_cropped
 
                 cap = cv2.VideoCapture(0)
+                img_id = 0
+                while True:
+                    ret, my_frame = cap.read()
+                    if face_cropped(my_frame) is not None:
+                        img_id += 1
+                        face = cv2.resize(face_cropped(my_frame), (450, 450))
+                        face = cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
+                        file_name_path = "data/user." + str(self.var_userid.get()) + "." + str(img_id) + ".jpg"
+                        cv2.imwrite(file_name_path, face)
+                        cv2.putText(face, str(img_id), (50, 50), cv2.FONT_ITALIC, 2, (0, 255, 0), 2)
+                        cv2.imshow("Cropped Face", face)
+
+                    if cv2.waitKey(1) == 13 or int(img_id) == 100:
+                        break
+                cap.release()
+                cv2.destroyAllWindows()
+                global save_flag
+                save_flag = -1
+                messagebox.showinfo("Result", "Generating Dataset Completed!!!!", parent=self.screen)
+            except Exception as es:
+                messagebox.showerror("Error", f"Due to :{str(es)}", parent=self.screen)
+            self.photo_flag = 0
+
+    # Generate data set by video and take Sample using Opencv
+    def generate_datasetbyVideo(self):
+
+        if self.var_username.get() == "":
+            messagebox.showerror("Error", "Username required", parent=self.screen)
+
+        elif self.var_userid.get() == "":
+            messagebox.showerror("Error", "ID required", parent=self.screen)
+        else:
+            try:
+                # Load haarcascade frontalface default from opencv
+                face_classifier = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+
+                def face_cropped(img):
+                    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                    faces = face_classifier.detectMultiScale(gray, 1.3, 5)
+                    # Scaling Factor = 1.3  Minimum Neighbor = 5
+                    for (x, y, w, h) in faces:
+                        face_cropped = img[y:y + h, x:x + w]
+                        return face_cropped
+
+                filename = askopenfilename()
+                cap = cv2.VideoCapture(filename)
                 img_id = 0
                 while True:
                     ret, my_frame = cap.read()
